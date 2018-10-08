@@ -1,89 +1,27 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import GraphView from 'react-digraph'
-import GraphConfig from './graph-config.js' // Configures node/edge types
+import GraphConfig from './graph-config.js'
 
-const styles = {
-  graph: {
-    width: '100%'
-  }
-};
+const NODE_KEY = "id"
 
-const NODE_KEY = "id" // Key used to identify nodes
-
-// These keys are arbitrary (but must match the config)
-// However, GraphView renders text differently for empty types
-// so this has to be passed in if that behavior is desired.
 const NORMAL_TYPE = "normal";
 const ACTIVE_TYPE = "active";
 const DONE_TYPE = "done";
-const EMPTY_TYPE = "empty"; // Empty node type
-const SPECIAL_TYPE = "special";
-const SPECIAL_CHILD_SUBTYPE = "specialChild";
-const EMPTY_EDGE_TYPE = "emptyEdge";
-const SPECIAL_EDGE_TYPE = "specialEdge";
-
-// NOTE: Edges must have 'source' & 'target' attributes
-// In a more realistic use case, the graph would probably originate
-// elsewhere in the App or be generated from some other state upstream of this component.
-const sample = {
-  "nodes": [
-    {
-      "id": 1,
-      "title": "Node A",
-      "x": 0,
-      "y": 0,
-      "type": EMPTY_TYPE
-    },
-    {
-      "id": 2,
-      "title": "Node B",
-      "x": 200,
-      "y": 0,
-      "type": EMPTY_TYPE
-    },
-    {
-      "id": 3,
-      "title": "Node C",
-      "x": 237.5757598876953,
-      "y": 61.81818389892578,
-      "type": EMPTY_TYPE
-    },
-    {
-      "id": 4,
-      "title": "Node C",
-      "x": 600.5757598876953,
-      "y": 600.81818389892578,
-      "type": EMPTY_TYPE
-    }
-  ],
-  "edges": [
-    {
-      "source": 1,
-      "target": 2,
-      "type": SPECIAL_EDGE_TYPE
-    },
-    {
-      "source": 2,
-      "target": 4,
-      "type": EMPTY_EDGE_TYPE
-    }
-  ]
-}
+const NORMAL_EDGE_TYPE = "normalEdge";
 
 export class Graph extends Component {
-
   constructor(props) {
     super(props)
-
     this.state = {
       graph: this.constructTodosGraph(this.props.todos),
-      selected: {}
     }
   }
 
   componentWillReceiveProps(newProps){
-    this.setState({graph: this.constructTodosGraph(newProps.todos)})
+    this.setState({
+      graph: this.constructTodosGraph(newProps.todos)
+    })
   }
 
   // Helper to find the index of a given node
@@ -110,7 +48,7 @@ export class Graph extends Component {
           return {
             source: id,
             target: todo.id,
-            type: EMPTY_EDGE_TYPE
+            type: NORMAL_EDGE_TYPE
           }
         }))
       })
@@ -183,21 +121,10 @@ export class Graph extends Component {
   // Called by 'drag' handler, etc..
   // to sync updates from D3 with the graph
   onUpdateNode = viewNode => {
-    const graph = this.state.graph;
-    const i = this.getNodeIndex(viewNode);
-
-    graph.nodes[i] = viewNode;
-    this.setState({ graph: graph });
   }
 
   // Node 'mouseUp' handler
   onSelectNode = viewNode => {
-    // Deselect events will send Null viewNode
-    if (!!viewNode) {
-      this.setState({ selected: viewNode });
-    } else {
-      this.setState({ selected: {} });
-    }
   }
 
   // Edge 'mouseUp' handler
@@ -207,24 +134,6 @@ export class Graph extends Component {
 
   // Updates the graph with a new node
   onCreateNode = (x, y) => {
-    const graph = this.state.graph;
-
-    // This is just an example - any sort of logic
-    // could be used here to determine node type
-    // There is also support for subtypes. (see 'sample' above)
-    // The subtype geometry will underlay the 'type' geometry for a node
-    const type = Math.random() < 0.25 ? SPECIAL_TYPE : EMPTY_TYPE;
-
-    const viewNode = {
-      id: this.state.graph.nodes.length + 1,
-      title: '',
-      type: type,
-      x: x,
-      y: y
-    }
-
-    graph.nodes.push(viewNode);
-    this.setState({ graph: graph });
   }
 
   // Deletes a node from the graph
@@ -248,14 +157,10 @@ export class Graph extends Component {
   onCreateEdge = (sourceViewNode, targetViewNode) => {
     const graph = this.state.graph;
 
-    // This is just an example - any sort of logic
-    // could be used here to determine edge type
-    const type = sourceViewNode.type === SPECIAL_TYPE ? SPECIAL_EDGE_TYPE : EMPTY_EDGE_TYPE;
-
     const viewEdge = {
       source: sourceViewNode[NODE_KEY],
       target: targetViewNode[NODE_KEY],
-      type: type
+      type: NORMAL_EDGE_TYPE
     }
 
     // Only add the edge when the source node is not the same as the target
@@ -290,32 +195,18 @@ export class Graph extends Component {
     this.setState({ graph: graph, selected: {} });
   }
 
-  /*
-   * Render
-   */
-
   render() {
-    const nodes = this.state.graph.nodes;
-    const edges = this.state.graph.edges;
-    const selected = this.state.selected;
-
-    const NodeTypes = GraphConfig.NodeTypes;
-    const NodeSubtypes = GraphConfig.NodeSubtypes;
-    const EdgeTypes = GraphConfig.EdgeTypes;
-
     return (
       <div id='graph' style={{...styles.graph, height: window.innerHeight}}>
-
         <GraphView
           ref={(el) => this.GraphView = el}
           nodeKey={NODE_KEY}
-          emptyType={EMPTY_TYPE}
-          nodes={nodes}
-          edges={edges}
-          selected={selected}
-          nodeTypes={NodeTypes}
-          nodeSubtypes={NodeSubtypes}
-          edgeTypes={EdgeTypes}
+          nodes={this.state.graph.nodes}
+          edges={this.state.graph.edges}
+          selected={[]}
+          nodeTypes={GraphConfig.NodeTypes}
+          nodeSubtypes={GraphConfig.NodeSubtypes}
+          edgeTypes={GraphConfig.EdgeTypes}
           enableFocus={false}
           getViewNode={this.getViewNode}
           onSelectNode={this.onSelectNode}
@@ -329,8 +220,13 @@ export class Graph extends Component {
       </div>
     );
   }
-
 }
+
+const styles = {
+  graph: {
+    width: '100%'
+  }
+};
 
 Graph.propTypes = {
   todos: PropTypes.arrayOf(PropTypes.shape({
@@ -338,6 +234,7 @@ Graph.propTypes = {
     completed: PropTypes.bool.isRequired,
     text: PropTypes.string.isRequired
   }).isRequired).isRequired,
+  addDependence: PropTypes.func.isRequired,
 }
 
 export default Graph

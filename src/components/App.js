@@ -6,15 +6,27 @@ import GraphContainer from '../containers/GraphContainer';
 
 const App = () => (
   <div>
-    <div style={{float: 'left', width: '30%', height: window.innerHeight, overflow: 'scroll'}}>
+    <div style={styles.todo}>
       <AddTodo />
       <VisibleTodoList />
       <Footer />
     </div>
-    <div style={{float: 'right', width: '70%'}}>
+    <div style={styles.graph}>
       <GraphContainer />
     </div>
   </div>
 )
+
+const styles = {
+  todo:{
+    float: 'left',
+    width: '30%',
+    height: window.innerHeight, overflow: 'scroll'
+  },
+  graph:{
+    float: 'right',
+    width: '70%'
+  }
+}
 
 export default App

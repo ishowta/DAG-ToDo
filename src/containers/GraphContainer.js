@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { addDependence } from '../actions'
+import { addDependence, toggleTodo, deleteTodo, removeDependence } from '../actions'
 import Graph from '../components/Graph'
 import { VisibilityFilters } from '../actions'
 
@@ -20,11 +20,7 @@ const mapStateToProps = state => ({
   todos: getVisibleTodos(state.todos, state.visibilityFilter)
 })
 
-const mapDispatchToProps = dispatch => ({
-  addDependence: ids => dispatch(addDependence(ids))
-})
-
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  {addDependence, toggleTodo, deleteTodo, removeDependence}
 )(Graph)

@@ -8,19 +8,18 @@ const NormalShape = (
 
 const ActiveShape = (
   <symbol viewBox="0 0 100 100" id="active">
-    <rect x="0" y="0" width="100" height="100" fill="rgba(249, 166, 2, 1)"></rect>
+    <rect x="0" y="0" width="100" height="100" fill="rgba(30, 144, 255, 1)"></rect>
   </symbol>
 )
 
 const DoneShape = (
   <symbol viewBox="0 0 100 100" id="done">
-    <rect x="0" y="0" width="100" height="100" fill="rgba(150, 150, 150, 1)"></rect>
+    <rect x="0" y="0" width="100" height="100" fill="rgba(176, 196, 222, 1)"></rect>
   </symbol>
 )
 
 const NormalEdgeShape = (
-  <symbol viewBox="0 0 50 50" id="emptyEdge">
-    <circle cx="25" cy="25" r="8" fill="currentColor"> </circle>
+  <symbol viewBox="0 0 50 50" id="normalEdge">
   </symbol>
 )
 

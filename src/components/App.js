@@ -20,12 +20,13 @@ const App = () => (
 const styles = {
   todo:{
     float: 'left',
-    width: '30%',
+    width: '20%',
     height: window.innerHeight, overflow: 'scroll'
   },
   graph:{
     float: 'right',
-    width: '70%'
+    width: '80%',
+    position: 'relative',
   }
 }
 

@@ -39,61 +39,83 @@ export class Graph extends Component {
     })
   }
 
-  constructTodosGraph = (todos) => {
-    var todos = todos
-    const edges = (() => {
-      var edges = []
-      todos.forEach((todo)=>{
-        edges.push(...todo.depends_on.map((id)=>{
-          return {
-            source: id,
-            target: todo.id,
-            type: NORMAL_EDGE_TYPE
-          }
-        }))
-      })
-      return edges
-    })()
+  _generateEdges = (todos) => {
+    const indexOf = id => todos.findIndex(todo => todo.id === id)
+    return todos.reduce((edges, todo) => (
+      edges.concat(todo.depends_on
+        .filter(id => indexOf(id) !== -1)
+        .map(id => {
+        return {
+          source: id,
+          target: todo.id,
+          type: NORMAL_EDGE_TYPE
+        }
+      }))
+    ), [])
+  }
+
+  _generateTargetsAndSourcesList = (todos, edges) => {
+    const indexOf = id => todos.findIndex(todo => todo.id === id)
     var targets_list = todos.map(()=>[])
-    var depth_list = todos.map(()=>0)
+    var sources_list = todos.map(()=>[])
     edges.forEach(edge => {
-      targets_list[edge.source].push(edge.target)
+      targets_list[indexOf(edge.source)].push(edge.target)
+      sources_list[indexOf(edge.target)].push(edge.source)
     })
+    return [targets_list, sources_list]
+  }
+
+  _calcurateDepth = (todos, targets_list) => {
+    const indexOf = id => todos.findIndex(todo => todo.id === id)
+    var depth_list = todos.map(() => 0)
     const updateDepth = (s, t) => {
       if(depth_list[s] >= depth_list[t]){
         depth_list[t] = depth_list[s] + 1
         targets_list[t].forEach(t_target => {
-          updateDepth(t, t_target)
+          updateDepth(t, indexOf(t_target))
         })
       }
     }
-    targets_list.forEach((targets,i) => {
+    targets_list.forEach((targets,todo_i) => {
       targets.forEach(target => {
-        updateDepth(i, target)
+        updateDepth(todo_i, indexOf(target))
       })
     })
-    var nth_list = new Array(Math.max(...depth_list, 0)+1)
-    nth_list.fill(0)
+    return depth_list
+  }
+
+  constructTodosGraph = (todos) => {
+    const indexOf = id => todos.findIndex(todo => todo.id === id)
+    const edges = this._generateEdges(todos)
+    const [targets_list, sources_list] = this._generateTargetsAndSourcesList(todos, edges)
+    const depth_list = this._calcurateDepth(todos, targets_list)
+
+    // 深さnのtodoのうちどれが何番目なのかを計算する
+    var nth_counter = new Array(Math.max(...depth_list, 0) + 1)
+    nth_counter.fill(0)
     var node_nth = depth_list.map(d=>{
-      nth_list[d] += 1
-      return nth_list[d] - 1
+      nth_counter[d] += 1
+      return nth_counter[d] - 1
     })
+
+    // Activeなタスクを探してマークをつける
     var active_list = todos.map(()=>false)
-    var cnt = 0
     const searchActiveNode = (i) => {
-      cnt += 1
-      if(cnt>10) return
-      if(todos[i].completed === false){
+      if(todos[i].completed === false
+        && sources_list[i].every(source => todos[indexOf(source)].completed === true)
+      ){
         active_list[i] = true
       }else{
         targets_list[i].forEach(target => {
-          searchActiveNode(target)
+          searchActiveNode(indexOf(target))
         })
       }
     }
     depth_list.forEach((depth, i)=>{
       if(depth === 0) searchActiveNode(i)
     })
+
+    // nodes
     const nodes = todos.map((todo, i)=>{
       return {
         "id": todo.id,
@@ -125,10 +147,12 @@ export class Graph extends Component {
 
   // Node 'mouseUp' handler
   onSelectNode = viewNode => {
+    if(viewNode !== null) this.props.toggleTodo(viewNode.id)
   }
 
   // Edge 'mouseUp' handler
   onSelectEdge = viewEdge => {
+    console.log("select",viewEdge)
     this.setState({ selected: viewEdge });
   }
 
@@ -163,14 +187,50 @@ export class Graph extends Component {
       type: NORMAL_EDGE_TYPE
     }
 
+    // 閉路ができてないかチェック
+    const indexOf = id => this.props.todos.findIndex(todo => todo.id === id)
+    var [targets_list, _] = this._generateTargetsAndSourcesList(this.props.todos, graph.edges)
+    const depth_list = this._calcurateDepth(this.props.todos, targets_list)
+
+    if(targets_list[indexOf(viewEdge.source)].findIndex(target => target === viewEdge.target) != -1){
+      //console.log("Edge already in there")
+      this.props.removeDependence({
+        from_id: viewEdge.target,
+        to_id: viewEdge.source
+      })
+      return
+    }
+
+    var findCloseNetwork = false
+    targets_list[indexOf(viewEdge.source)].push(viewEdge.target)
+    const searchCloseNetwork = (marking_list, i) => {
+      targets_list[i].forEach(target => {
+        if(marking_list[indexOf(target)]){
+          findCloseNetwork = true
+          return
+        }
+        var new_marking_list = [...marking_list]
+        new_marking_list[indexOf(target)] = true
+        searchCloseNetwork(new_marking_list ,indexOf(target))
+      })
+    }
+    depth_list.forEach((depth, i)=>{
+      if(depth === 0){
+        var marking_list = this.props.todos.map(todo => false)
+        marking_list[i] = true
+        searchCloseNetwork(marking_list, i)
+      }
+    })
+
     // Only add the edge when the source node is not the same as the target
-    if (viewEdge.source !== viewEdge.target) {
+    if (findCloseNetwork === false && viewEdge.source !== viewEdge.target) {
       graph.edges.push(viewEdge);
       this.props.addDependence({
         from_id: viewEdge.target,
         to_id: viewEdge.source
       })
-      //this.setState({ graph: graph });
+    }else{
+      console.log("invalid edge!")
     }
   }
 
@@ -216,6 +276,8 @@ export class Graph extends Component {
           onSelectEdge={this.onSelectEdge}
           onCreateEdge={this.onCreateEdge}
           onSwapEdge={this.onSwapEdge}
+          canDeleteNode={false}
+          canDeleteEdge={false}
           onDeleteEdge={this.onDeleteEdge} />
       </div>
     );
@@ -235,6 +297,8 @@ Graph.propTypes = {
     text: PropTypes.string.isRequired
   }).isRequired).isRequired,
   addDependence: PropTypes.func.isRequired,
+  toggleTodo: PropTypes.func.isRequired,
+  deleteTodo: PropTypes.func.isRequired,
 }
 
 export default Graph

@@ -4,7 +4,7 @@ const todos = (state = [], action) => {
       return [
         ...state,
         {
-          id: state.length,
+          id: Math.max(...state.map(todo => todo.id), 0) + 1,
           text: action.text,
           completed: false,
           depends_on: []
@@ -12,8 +12,14 @@ const todos = (state = [], action) => {
       ]
     case 'ADD_DEPENDENCE':
       return state.map(todo =>
-        (todo.id == action.ids.from_id)
+        (todo.id === action.ids.from_id)
           ? {...todo, depends_on: [...todo.depends_on, action.ids.to_id]}
+          : todo
+      )
+    case 'REMOVE_DEPENDENCE':
+      return state.map(todo =>
+        (todo.id === action.ids.from_id)
+          ? {...todo, depends_on: todo.depends_on.filter(dependence => dependence !== action.ids.to_id)}
           : todo
       )
     case 'TOGGLE_TODO':
@@ -23,9 +29,18 @@ const todos = (state = [], action) => {
           : todo
       )
     case 'DELETE_TODO':
+      const deleteTodo = state.find(todo => todo.id === action.id)
       return state
         .filter(todo => todo.id !== action.id)
-        .map((todo,i) => {return {...todo, id: i, depends_on: todo.depends_on.filter(dependence => dependence != action.id)}})
+        .map(todo => {
+          // depends_onのリンクをつなげて返す
+          const hasDeleteNode = todo.depends_on.some(dependence => dependence === action.id)
+          const filtered_depends = todo.depends_on.filter(dependence => dependence !== action.id)
+          return {
+            ...todo,
+            depends_on: hasDeleteNode ? filtered_depends.concat(deleteTodo.depends_on) : filtered_depends
+          }
+        })
     default:
       return state
   }

@@ -21,12 +21,14 @@ const Todo = ({ classes, onClick, onClickDelete, completed, text }) => {
         <Button
           size="small"
           onClick={onClick}
+          color="primary"
         >
           {completed ? 'reDone' : 'Done'}
         </Button>
         <Button
           size="small"
           onClick={onClickDelete}
+          color="secondary"
         >
           Delete
         </Button>

@@ -8,6 +8,11 @@ export const addDependence = ids => ({
   ids
 })
 
+export const removeDependence = ids => ({
+  type: 'REMOVE_DEPENDENCE',
+  ids
+})
+
 export const setVisibilityFilter = filter => ({
   type: 'SET_VISIBILITY_FILTER',
   filter

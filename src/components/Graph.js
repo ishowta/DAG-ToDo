@@ -120,8 +120,8 @@ export class Graph extends Component {
       return {
         "id": todo.id,
         "title": todo.text,
-        "x": node_nth[i] * 200,
-        "y": depth_list[i] * 200,
+        "x": node_nth[i] * 200 + 200,
+        "y": depth_list[i] * 200 + 300,
         "type": todo.completed ? DONE_TYPE : active_list[i] ? ACTIVE_TYPE : NORMAL_TYPE
       }
     })

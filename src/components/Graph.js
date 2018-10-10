@@ -92,10 +92,23 @@ export class Graph extends Component {
 
     // 深さnのtodoのうちどれが何番目なのかを計算する
     var nth_counter = new Array(Math.max(...depth_list, 0) + 1)
-    nth_counter.fill(0)
-    var node_nth = depth_list.map(d=>{
-      nth_counter[d] += 1
-      return nth_counter[d] - 1
+    var base_value = 0
+    var node_nth = todos.map(todo => 0)
+    const calcNth = (currentNodeIndex) => {
+      const nth = nth_counter[depth_list[currentNodeIndex]]
+      node_nth[currentNodeIndex] = nth
+      nth_counter[depth_list[currentNodeIndex]] += 1
+      base_value = base_value < nth ? nth : base_value
+      targets_list[currentNodeIndex].forEach(target => {
+        calcNth(indexOf(target))
+      })
+    }
+    depth_list.forEach((depth, i)=>{
+      if(depth === 0){
+        nth_counter.fill(base_value)
+        calcNth(i)
+        base_value += 1
+      }
     })
 
     // Activeなタスクを探してマークをつける

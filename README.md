@@ -1,6 +1,6 @@
 [Github-Pages](https://kinironote.github.io/DAG-todo-sample)
 
-**This is an incomplete template**
+**This is an incomplete sample**
 
 It is a simple TodoList with dependency expressed by DAG
 

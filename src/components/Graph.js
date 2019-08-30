@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import GraphView from 'react-digraph'
 import GraphConfig from './graph-config.js'
+import { type INodeType, GraphUtils } from "react-digraph"
 
 const NODE_KEY = "id"
 
@@ -9,6 +10,56 @@ const NORMAL_TYPE = "normal";
 const ACTIVE_TYPE = "active";
 const DONE_TYPE = "done";
 const NORMAL_EDGE_TYPE = "normalEdge";
+
+Object.defineProperty(Array.prototype, 'chunk', {
+  value: function(chunkSize) {
+    var array = this;
+    return [].concat.apply([],
+      array.map(function(elem, i) {
+        return i % chunkSize ? [] : [array.slice(i, i + chunkSize)];
+      })
+    );
+  }
+});
+
+class TodoNodeText extends React.Component {
+  getTypeText(data: INodeType, nodeTypes: any) {
+    if (data.type && nodeTypes[data.type]) {
+      return nodeTypes[data.type].typeText;
+    } else if (nodeTypes.emptyNode) {
+      return nodeTypes.emptyNode.typeText;
+    } else {
+      return null;
+    }
+  }
+
+  render() {
+    const { data, nodeTypes, isSelected } = this.props;
+    const lineOffset = 18;
+    const title = data.title;
+    const className = GraphUtils.classNames('node-text', {
+      selected: isSelected,
+    });
+    const typeText = this.getTypeText(data, nodeTypes);
+
+    const renderText = () => {
+      const lines = [...data.title].chunk(11)
+      return lines.slice(0, 2).map((text, i) =>
+        <tspan x={0} y={lineOffset * i} fontSize="12px" key={i}>
+          {text.join("") + (i === 1 && lines.length > 2 ? "..." : "" )}
+        </tspan>
+      )
+    }
+
+    return (
+      <text className={[...className, "wraptext"]} textAnchor="middle">
+        {!!typeText && <tspan opacity="0.5">{typeText}</tspan>}
+        {title && renderText()}
+        {title && <title>{title}</title>}
+      </text>
+    );
+  }
+}
 
 export class Graph extends Component {
   constructor(props) {
@@ -93,7 +144,7 @@ export class Graph extends Component {
     // 深さnのtodoのうちどれが何番目なのかを計算する
     var nth_counter = new Array(Math.max(...depth_list, 0) + 1)
     var base_value = 0
-    var node_nth = todos.map(todo => 0)
+    var node_nth = todos.map(_ => 0)
     const calcNth = (currentNodeIndex) => {
       const nth = nth_counter[depth_list[currentNodeIndex]]
       node_nth[currentNodeIndex] = nth
@@ -155,7 +206,7 @@ export class Graph extends Component {
 
   // Called by 'drag' handler, etc..
   // to sync updates from D3 with the graph
-  onUpdateNode = viewNode => {
+  onUpdateNode = _viewNode => {
   }
 
   // Node 'mouseUp' handler
@@ -170,7 +221,7 @@ export class Graph extends Component {
   }
 
   // Updates the graph with a new node
-  onCreateNode = (x, y) => {
+  onCreateNode = (_x, _y) => {
   }
 
   // Deletes a node from the graph
@@ -180,7 +231,7 @@ export class Graph extends Component {
     graph.nodes.splice(i, 1);
 
     // Delete any connected edges
-    const newEdges = graph.edges.filter((edge, i) => {
+    const newEdges = graph.edges.filter(edge => {
       return edge.source !== viewNode[NODE_KEY] &&
         edge.target !== viewNode[NODE_KEY]
     })
@@ -202,10 +253,10 @@ export class Graph extends Component {
 
     // 閉路ができてないかチェック
     const indexOf = id => this.props.todos.findIndex(todo => todo.id === id)
-    var [targets_list, _] = this._generateTargetsAndSourcesList(this.props.todos, graph.edges)
+    var [targets_list, ] = this._generateTargetsAndSourcesList(this.props.todos, graph.edges)
     const depth_list = this._calcurateDepth(this.props.todos, targets_list)
 
-    if(targets_list[indexOf(viewEdge.source)].findIndex(target => target === viewEdge.target) != -1){
+    if(targets_list[indexOf(viewEdge.source)].findIndex(target => target === viewEdge.target) !== -1){
       //console.log("Edge already in there")
       this.props.removeDependence({
         from_id: viewEdge.target,
@@ -229,7 +280,7 @@ export class Graph extends Component {
     }
     depth_list.forEach((depth, i)=>{
       if(depth === 0){
-        var marking_list = this.props.todos.map(todo => false)
+        var marking_list = this.props.todos.map(_ => false)
         marking_list[i] = true
         searchCloseNetwork(marking_list, i)
       }
@@ -291,7 +342,21 @@ export class Graph extends Component {
           onSwapEdge={this.onSwapEdge}
           canDeleteNode={false}
           canDeleteEdge={false}
-          onDeleteEdge={this.onDeleteEdge} />
+          onDeleteEdge={this.onDeleteEdge}
+          maxTitleChars={Infinity}
+          nodeSize={150}
+          renderNodeText={(data, id, isSelected) => {
+            return (
+              <TodoNodeText
+                nodeTypes={GraphConfig.NodeTypes}
+                data={data}
+                id={id}
+                isSelected={isSelected}
+                maxTitleChars={Infinity}
+              />
+            )
+          }}
+        />
       </div>
     );
   }

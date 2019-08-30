@@ -29,9 +29,33 @@ class BApp extends React.Component {
     return (
       <div>
         <div style={styles.todo}>
+          {findGetParameter("room") === null && (
+            <div style={{"white-space": "pre-line","fontSize": "12px", "marginLeft": "4px", "marginBottom": "10px"}}>
+              {`
+                使い方
+
+                入室
+                - ローカル：/
+                - ルーム：/?room=[ルーム名]
+
+                操作
+                - タスクの追加：下の入力欄から
+                - 依存関係の追加：Shiftを押しながらD&D
+                - 依存関係の削除：矢印をクリック
+                - タスクの完了：タスクをクリック
+                - タスクの削除：タスク一覧のDELETEをクリック
+
+                表示
+                - 未完了のタスクだけ表示：Activeをクリック
+                - 完了したタスクだけ表示：Completedをクリック
+                - 全て表示：Allをクリック
+                `
+              }
+            </div>
+          )}
           <AddTodo />
-          <VisibleTodoList />
           <Footer />
+          <VisibleTodoList />
         </div>
         <div style={styles.graph}>
           <GraphContainer />

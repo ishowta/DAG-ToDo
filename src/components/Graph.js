@@ -215,9 +215,17 @@ export class Graph extends Component {
   }
 
   // Edge 'mouseUp' handler
-  onSelectEdge = viewEdge => {
+  /* onSelectEdge = viewEdge => {
     console.log("select",viewEdge)
     this.setState({ selected: viewEdge });
+  } */
+
+  // Remove the edge at select it
+  onSelectEdge = edge => {
+    this.props.removeDependence({
+      from_id: edge.target,
+      to_id: edge.source
+    })
   }
 
   // Updates the graph with a new node
@@ -241,7 +249,7 @@ export class Graph extends Component {
     this.setState({ graph: graph, selected: {} });
   }
 
-  // Creates a new node between two edges
+  // Creates a new edge between two nodes
   onCreateEdge = (sourceViewNode, targetViewNode) => {
     const graph = this.state.graph;
 

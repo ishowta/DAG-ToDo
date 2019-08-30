@@ -365,6 +365,8 @@ export class Graph extends Component {
           onDeleteEdge={this.onDeleteEdge}
           maxTitleChars={Infinity}
           nodeSize={150}
+          zoomDelay={2000}
+          zoomDur={300}
           renderNodeText={(data, id, isSelected) => {
             return (
               <TodoNodeText

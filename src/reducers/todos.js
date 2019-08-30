@@ -1,5 +1,10 @@
-const todos = (state = [], action) => {
+import axios from "axios"
+import { findGetParameter } from "../util";
+
+const _todos = (state = [], action) => {
   switch (action.type) {
+    case 'INIT':
+      return action.todos
     case 'ADD_TODO':
       return [
         ...state,
@@ -28,7 +33,7 @@ const todos = (state = [], action) => {
           ? {...todo, completed: !todo.completed}
           : todo
       )
-    case 'DELETE_TODO':
+    case 'DELETE_TODO': {
       const deleteTodo = state.find(todo => todo.id === action.id)
       return state
         .filter(todo => todo.id !== action.id)
@@ -41,9 +46,24 @@ const todos = (state = [], action) => {
             depends_on: hasDeleteNode ? filtered_depends.concat(deleteTodo.depends_on) : filtered_depends
           }
         })
+    }
     default:
       return state
   }
+}
+
+const todos = (state = [], action) => {
+  const res = _todos(state, action)
+
+  if(action.type !== "INIT" && res.length !== 0){
+    // Send todos to remote
+    const key = findGetParameter("room")
+    if(key !== null){
+      axios.post(`http://13.230.103.8:8001/dagtodo?room=${key}`, JSON.stringify(res))
+    }
+  }
+
+  return res
 }
 
 export default todos

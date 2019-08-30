@@ -142,24 +142,36 @@ export class Graph extends Component {
     const depth_list = this._calcurateDepth(todos, targets_list)
 
     // 深さnのtodoのうちどれが何番目なのかを計算する
-    var nth_counter = new Array(Math.max(...depth_list, 0) + 1)
-    var base_value = 0
-    var node_nth = todos.map(_ => 0)
-    const calcNth = (currentNodeIndex) => {
-      const nth = nth_counter[depth_list[currentNodeIndex]]
-      node_nth[currentNodeIndex] = nth
-      nth_counter[depth_list[currentNodeIndex]] += 1
-      base_value = base_value < nth ? nth : base_value
-      targets_list[currentNodeIndex].forEach(target => {
-        calcNth(indexOf(target))
+    let node_nth = todos.map(_ => 0)
+    const nodeListEachDepth = [...Array(Math.max(...depth_list, 0) + 1).keys()].map((_, depthNum)=>{
+      return depth_list.reduce((list, depth, i)=>{
+        if(depth === depthNum) list.push(i)
+        return list
+      }, [])
+    })
+    // それぞれの深さのノードを、親ノードのもっとも右の位置でソートしてから追加していく
+    nodeListEachDepth.forEach(nodes => {
+      // 親ノードのもっとも右の位置
+      const nodesMaxSourceNth = nodes.map(node => {
+        const sourcesNth = sources_list[node].map(sNode => node_nth[sNode - 1])
+        return Math.max(...sourcesNth, 0)
       })
-    }
-    depth_list.forEach((depth, i)=>{
-      if(depth === 0){
-        nth_counter.fill(base_value)
-        calcNth(i)
-        base_value += 1
-      }
+      // ソート
+      let nodeDataList = nodes.map((node, i )=> [node, i, nodesMaxSourceNth[i]])
+      nodeDataList.sort((a,b) => {
+        const an = a[2]
+        const bn = b[2]
+        if(an < bn) return -1
+        if(an === bn) return 0
+        if(an > bn) return 1
+      })
+      // nthの計算
+      let nthCnt = 0
+      nodeDataList.forEach((nodeTuple)=>{
+        nthCnt = Math.max(nthCnt, nodeTuple[2])
+        node_nth[nodeTuple[0]] = nthCnt
+        nthCnt += 1
+      })
     })
 
     // Activeなタスクを探してマークをつける

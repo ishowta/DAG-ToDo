@@ -18,12 +18,13 @@ const Todo = ({ classes, onClick, onClickDelete, completed, text }) => {
     <Card className={classes.card}>
       <CardContent>
         {text}
+        <br />
         <Button
           size="small"
           onClick={onClick}
-          color="primary"
+          color='primary'
         >
-          {completed ? 'reDone' : 'Done'}
+          {completed ? 'Undo' : 'Done'}
         </Button>
         <Button
           size="small"

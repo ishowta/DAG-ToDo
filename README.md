@@ -4,7 +4,7 @@
 
 It is a simple TodoList with dependency expressed by DAG
 
-![screenshot](./screenshot.png)
+![screenshot](./screenshot2.png)
 
 ### How to use
 1. Add some todos

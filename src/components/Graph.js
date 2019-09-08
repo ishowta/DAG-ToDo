@@ -11,12 +11,32 @@ const ACTIVE_TYPE = "active";
 const DONE_TYPE = "done";
 const NORMAL_EDGE_TYPE = "normalEdge";
 
+// https://stackoverflow.com/questions/2057682/determine-pixel-length-of-string-in-javascript-jquery
+function getWidthOfText(txt, fontname = "", fontsize = "8px"){
+    if(getWidthOfText.e === undefined){
+        getWidthOfText.e = document.createElement('span');
+        document.body.appendChild(getWidthOfText.e);
+    }
+    getWidthOfText.e.style.display = "table";
+    getWidthOfText.e.style.fontSize = fontsize;
+    getWidthOfText.e.style.fontFamily = fontname;
+    getWidthOfText.e.innerText = txt;
+    let res = getWidthOfText.e.offsetWidth
+    getWidthOfText.e.style.display = "none";
+    return res;
+}
+
 Object.defineProperty(Array.prototype, 'chunk', {
   value: function(chunkSize) {
+    console.log(getWidthOfText(this.join("")), this, this.join(""))
+    let size = getWidthOfText(this.join(""))
     var array = this;
+    let len = array.length;
+    let dif = Math.floor(len / (size / chunkSize));
+    console.log(dif);
     return [].concat.apply([],
       array.map(function(elem, i) {
-        return i % chunkSize ? [] : [array.slice(i, i + chunkSize)];
+        return i % dif ? [] : [array.slice(i, i + dif)];
       })
     );
   }
@@ -43,7 +63,8 @@ class TodoNodeText extends React.Component {
     const typeText = this.getTypeText(data, nodeTypes);
 
     const renderText = () => {
-      const lines = [...data.title].chunk(11)
+      const lines = [...data.title].chunk(100)
+      console.log("lines", lines)
       return lines.slice(0, 2).map((text, i) =>
         <tspan x={0} y={lineOffset * i} fontSize="12px" key={i}>
           {text.join("") + (i === 1 && lines.length > 2 ? "..." : "" )}
@@ -149,11 +170,18 @@ export class Graph extends Component {
         return list
       }, [])
     })
+
+    const getNodeIndexFromId = (id) => {
+	for(const [i, todo] of todos.entries()){
+	    if(todo.id === id) return i
+    	}
+    }
+
     // それぞれの深さのノードを、親ノードのもっとも右の位置でソートしてから追加していく
     nodeListEachDepth.forEach(nodes => {
       // 親ノードのもっとも右の位置
       const nodesMaxSourceNth = nodes.map(node => {
-        const sourcesNth = sources_list[node].map(sNode => node_nth[sNode - 1])
+        const sourcesNth = sources_list[node].map(sNode => node_nth[getNodeIndexFromId(sNode)])
         return Math.max(...sourcesNth, 0)
       })
       // ソート

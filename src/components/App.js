@@ -14,7 +14,7 @@ class BApp extends React.Component {
     const key = findGetParameter("room")
     if(key !== null){
       window.setInterval(function(){
-        axios.get(`http://13.230.103.8:8001/dagtodo?room=${key}`)
+        axios.get(`server/${key}`)
         .then(res => {
           const currentTodos = res.data
           if(currentTodos !== ""){
@@ -36,7 +36,7 @@ class BApp extends React.Component {
 
                 入室
                 - ローカル：/
-                - ルーム：/?room=[ルーム名]
+                - ルーム：/ルーム名
 
                 操作
                 - タスクの追加：下の入力欄から

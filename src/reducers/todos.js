@@ -54,12 +54,11 @@ const _todos = (state = [], action) => {
 
 const todos = (state = [], action) => {
   const res = _todos(state, action)
-
   if(action.type !== "INIT" && res.length !== 0){
     // Send todos to remote
     const key = findGetParameter("room")
     if(key !== null){
-      axios.post(`http://13.230.103.8:8001/dagtodo?room=${key}`, JSON.stringify(res))
+      axios.post(`server/${key}`, JSON.stringify(res))
     }
   }
 

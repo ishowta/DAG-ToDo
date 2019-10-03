@@ -1,4 +1,4 @@
-[Github-Pages](https://kinironote.github.io/DAG-todo-sample)
+[Site](https://todo.clelia-house.tokyo/)
 
 **This is an incomplete sample**
 

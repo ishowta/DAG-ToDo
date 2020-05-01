@@ -1,6 +1,6 @@
 [Site](https://todo.temp-iwata.tokyo/)
 
-**This is an incomplete sample**
+**Code has not been refactored**
 
 It is a simple TodoList with dependency expressed by DAG
 

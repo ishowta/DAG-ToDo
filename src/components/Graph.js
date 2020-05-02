@@ -73,7 +73,7 @@ class TodoNodeText extends React.Component {
     }
 
     return (
-      <text className={[...className, "wraptext"]} textAnchor="middle">
+      <text className={[className, "wraptext"]} textAnchor="middle">
         {!!typeText && <tspan opacity="0.5">{typeText}</tspan>}
         {title && renderText()}
         {title && <title>{title}</title>}

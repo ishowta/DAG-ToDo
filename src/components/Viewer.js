@@ -15,7 +15,7 @@ const Viewer = ({ todo }) => (
                 borderRadius: "10px",
             }}>
                 {todo.text}
-                <a href={"https://scrapbox.io/" + findGetParameter("room") + "/" + todo.text}>
+                <a href={"https://scrapbox.io/" + findGetParameter("room") + "/" + todo.text} target="_blank">
                     (→ノート)
                 </a>
             </div>

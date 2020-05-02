@@ -10,4 +10,3 @@ It is a simple TodoList with dependency expressed by DAG
 1. Add some todos
 2. Add an arrow by dragging with shift-key from todo to todo
 3. Remove an arrow by click it
-4. If you complete a todo, click it to change state done

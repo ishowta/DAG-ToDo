@@ -57,7 +57,9 @@ class BApp extends React.Component {
           )}
           <AddTodo />
           <Footer />
-          <ViewerContainer />
+          {this.props.existsFocusedTodo &&
+            <ViewerContainer />
+          }
           <VisibleTodoList />
         </div>
         <div style={styles.graph}>
@@ -69,7 +71,9 @@ class BApp extends React.Component {
 }
 
 export default connect(
-  _ => ({}),
+  state => ({
+    existsFocusedTodo: state.viewer.focusTodoId && state.todos.find(t=>t.id == state.viewer.focusTodoId)
+  }),
   {init}
 )(BApp)
 

@@ -47,6 +47,12 @@ const _todos = (state = [], action) => {
           }
         })
     }
+    case 'CHANGE_TODO_TEXT':
+    return state.map(todo =>
+      (todo.id === action.id)
+        ? {...todo, text: action.text}
+        : todo
+    )
     default:
       return state
   }

@@ -7,6 +7,7 @@ import { findGetParameter } from "../util";
 import axios from "axios";
 import { init } from '../actions';
 import { connect } from "react-redux";
+import ViewerContainer from '../containers/ViewerContainer';
 
 class BApp extends React.Component {
   componentDidMount = () => {
@@ -55,6 +56,7 @@ class BApp extends React.Component {
           )}
           <AddTodo />
           <Footer />
+          <ViewerContainer />
           <VisibleTodoList />
         </div>
         <div style={styles.graph}>

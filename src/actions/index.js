@@ -33,6 +33,12 @@ export const deleteTodo = id => ({
   id
 })
 
+export const focusTodo = id => ({
+  type: 'FOCUS_TODO',
+  id
+})
+
+
 export const VisibilityFilters = {
   SHOW_ALL: 'SHOW_ALL',
   SHOW_COMPLETED: 'SHOW_COMPLETED',

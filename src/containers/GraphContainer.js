@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { addDependence, toggleTodo, deleteTodo, removeDependence } from '../actions'
+import { addDependence, toggleTodo, deleteTodo, removeDependence, focusTodo } from '../actions'
 import Graph from '../components/Graph'
 import { VisibilityFilters } from '../actions'
 
@@ -22,5 +22,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  {addDependence, toggleTodo, deleteTodo, removeDependence}
+  {addDependence, toggleTodo, deleteTodo, removeDependence, focusTodo}
 )(Graph)

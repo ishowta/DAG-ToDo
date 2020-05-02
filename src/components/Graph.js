@@ -28,12 +28,12 @@ function getWidthOfText(txt, fontname = "", fontsize = "8px"){
 
 Object.defineProperty(Array.prototype, 'chunk', {
   value: function(chunkSize) {
-    console.log(getWidthOfText(this.join("")), this, this.join(""))
+    // console.log(getWidthOfText(this.join("")), this, this.join(""))
     let size = getWidthOfText(this.join(""))
     var array = this;
     let len = array.length;
     let dif = Math.floor(len / (size / chunkSize));
-    console.log(dif);
+    // console.log(dif);
     return [].concat.apply([],
       array.map(function(elem, i) {
         return i % dif ? [] : [array.slice(i, i + dif)];
@@ -64,7 +64,7 @@ class TodoNodeText extends React.Component {
 
     const renderText = () => {
       const lines = [...data.title].chunk(100)
-      console.log("lines", lines)
+      // console.log("lines", lines)
       return lines.slice(0, 2).map((text, i) =>
         <tspan x={0} y={lineOffset * i} fontSize="12px" key={i}>
           {text.join("") + (i === 1 && lines.length > 2 ? "..." : "" )}
@@ -251,7 +251,8 @@ export class Graph extends Component {
 
   // Node 'mouseUp' handler
   onSelectNode = viewNode => {
-    if(viewNode !== null) this.props.toggleTodo(viewNode.id)
+    //if(viewNode !== null) this.props.toggleTodo(viewNode.id)
+    if(viewNode !== null) this.props.focusTodo(viewNode.id)
   }
 
   // Edge 'mouseUp' handler
@@ -427,6 +428,7 @@ Graph.propTypes = {
   addDependence: PropTypes.func.isRequired,
   toggleTodo: PropTypes.func.isRequired,
   deleteTodo: PropTypes.func.isRequired,
+  focusTodo: PropTypes.func.isRequired
 }
 
 export default Graph

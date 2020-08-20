@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.11.0",
     "@testing-library/dom": "^7.22.2",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
@@ -10,13 +11,22 @@
     "@types/axios": "^0.14.0",
     "@types/d3": "^5.7.2",
     "@types/jest": "^24.0.0",
+    "@types/lazy.js": "^0.5.2",
+    "@types/localforage": "^0.0.34",
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@types/react-redux": "^7.1.9",
+    "@types/redux-devtools-extension": "^2.13.2",
+    "@types/redux-logger": "^3.0.8",
+    "@types/redux-persist": "^4.3.1",
+    "@types/redux-thunk": "^2.1.0",
+    "@types/styled-components": "^5.1.2",
     "axios": "^0.19.2",
     "d3": "^5.16.0",
     "d3plus": "^1.9.8",
+    "lazy.js": "^0.5.1",
+    "localforage": "^1.9.0",
     "react": "^16.13.1",
     "react-digraph": "^7.0.0",
     "react-dom": "^16.13.1",
@@ -24,7 +34,14 @@
     "react-scripts": "3.4.3",
     "redux": "^4.0.5",
     "redux-cookies-middleware": "^0.2.1",
-    "typescript": "~3.7.2"
+    "redux-devtools-extension": "^2.13.8",
+    "redux-logger": "^3.0.6",
+    "redux-persist": "^6.0.0",
+    "redux-thunk": "^2.3.0",
+    "styled-components": "^5.1.1",
+    "typesafe-actions": "^5.1.0",
+    "typescript": "~3.7.2",
+    "utility-types": "^3.10.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -32,8 +49,8 @@
     "test": "react-scripts test",
     "test:once": "yarn test --watchAll=false",
     "eject": "react-scripts eject",
-    "lint:nofix": "eslint './src/**/*.{js,jsx,ts,tsx}'",
-    "lint": "yarn lint-check --fix"
+    "lint": "eslint './src/**/*.{js,jsx,ts,tsx}'",
+    "lint:fix": "yarn lint --fix"
   },
   "eslintConfig": {
     "extends": "react-app"

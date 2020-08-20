@@ -1,12 +1,15 @@
 [Site](https://todo.temp-iwata.tokyo/)
 
-**Code has not been refactored**
-
-It is a simple TodoList with dependency expressed by DAG
+It is a simple ToDo with dependency expressed by DAG
 
 ![screenshot](./screenshot2.png)
 
 ### How to use
-1. Add some todos
-2. Add an arrow by dragging with shift-key from todo to todo
-3. Remove an arrow by click it
+1. Add some ToDo's.
+2. Add dependence arrows by dragging with shift-key from ToDo to ToDo (Remove an arrow by click it).
+3. Let's start with Blue ToDo's!
+
+### Tasks
+- Connect to remote DB
+- Add test
+- Improve UI/UX

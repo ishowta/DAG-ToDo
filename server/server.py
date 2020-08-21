@@ -28,7 +28,9 @@ def event_stream(key):
 def dagtodo(room_name):
         key = room_name
         if request.method == "GET":
-                return Response(event_stream(key), mimetype="text/event-stream")
+                res = Response(event_stream(key), mimetype="text/event-stream")
+                res.headers['X-Accel-Buffering'] = 'no'
+                return res
         if request.method == "POST":
                 data = request.get_data()
                 data = base64.b64encode(data).decode("utf-8")

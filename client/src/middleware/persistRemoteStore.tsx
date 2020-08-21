@@ -23,8 +23,6 @@ class PersistRemoteStoreEventSourceConnector {
   connect(dispatch: Dispatch<PersistRemoteStoreAction>, path: string) {
     this.source = new EventSource(path)
     this.source.onmessage = function (event) {
-      console.log('message')
-      console.log(event.data)
       dispatch({
         type: 'persistRemoteStore/RECIEVED',
         payload: { data: JSON.parse(event.data) },

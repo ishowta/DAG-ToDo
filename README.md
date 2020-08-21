@@ -16,6 +16,7 @@ It is a simple ToDo with dependency expressed by DAG
 ### How to run
 1. client
    - `yarn`
+   - Copy `.env.sample` to `.env` and fill it
    - `yarn start`
 2. server
    - `pipenv install`

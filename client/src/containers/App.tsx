@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { getRoomName } from '../util'
+import { getRoomName, isRemoteMode } from '../util'
 import {
   ToDoListWrapper,
   ToDoGraphWrapper,
@@ -13,8 +13,12 @@ import Viewer from './Viewer'
 import { useSelector } from '../stores'
 import { ToDo } from '../stores/todos'
 import { VisibilityFilters } from '../stores/viewer'
+import { useDispatch } from 'react-redux'
+import { Dispatch } from 'redux'
+import { PersistRemoteStoreAction } from '../middleware/persistRemoteStore'
 
 const App: React.FC = () => {
+  const dispatch = useDispatch<Dispatch<PersistRemoteStoreAction>>()
   const { todos, viewer } = useSelector((state) => state)
   const focusedTodo: ToDo | undefined = (() => {
     if (viewer.forcusedToDo === null) return undefined
@@ -30,23 +34,15 @@ const App: React.FC = () => {
         return todos.filter((t) => !t.completed)
     }
   })()
-  //const { init } = todoActionCreators
+
   useEffect(() => {
-    // TODO: recieve remote todos
-    /*
-    const key = getRoomName()
-    if(key !== null){
-      window.setInterval(function(){
-        axios.get(`server/${key}`)
-        .then(res => {
-          const currentTodos = res.data
-          if(currentTodos !== ""){
-            init(currentTodos)
-          }
-        })
-      }, 1000);
-    }
-    */
+    isRemoteMode() &&
+      dispatch({
+        type: 'persistRemoteStore/CONNECT',
+        payload: {
+          path: `${process.env.REACT_APP_SERVER_ADDRESS}/${getRoomName()}`,
+        },
+      })
   }, [])
 
   return (

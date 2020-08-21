@@ -4,9 +4,9 @@ import { ActionsUnion } from '../type-utils'
 
 export const viewerActionCreators = {
   setVisibilityFilter: (filter: VisibilityFilters) =>
-    action('SET_VISIBILITY_FILTER', { filter }),
+    action('viewer/SET_VISIBILITY_FILTER', { filter }),
 
-  focusToDo: (id: number) => action('FOCUS_TODO', { id }),
+  focusToDo: (id: number) => action('viewer/FOCUS_TODO', { id }),
 }
 
 export type ViewerAction = ActionsUnion<typeof viewerActionCreators>

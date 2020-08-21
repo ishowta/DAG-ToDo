@@ -6,12 +6,17 @@ import * as serviceWorker from './serviceWorker'
 import { persistor, store } from './store'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
+import { getRoomName } from './util'
 
 ReactDOM.render(
   <Provider store={store}>
-    <PersistGate loading={'Loading...'} persistor={persistor}>
+    {getRoomName() === null ? (
+      <PersistGate loading={'Loading...'} persistor={persistor}>
+        <App />
+      </PersistGate>
+    ) : (
       <App />
-    </PersistGate>
+    )}
   </Provider>,
   document.getElementById('root')
 )

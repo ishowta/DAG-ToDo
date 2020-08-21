@@ -1,72 +1,77 @@
 import { ToDoState, ToDo } from '../stores/todos'
 import { ToDoAction } from '../actions/todos'
-import { Reducer } from 'redux'
+import { Reducer, AnyAction } from 'redux'
+import { PersistRemoteStoreAction } from '../middleware/persistRemoteStore'
 
 const initState: ToDoState = []
 
-export const todosReducer: Reducer<ToDoState, ToDoAction> = (
-  state: ToDoState = initState,
-  action: ToDoAction
+export const todosReducer: Reducer<ToDoState, AnyAction> = (
+  state = initState,
+  action
 ): ToDoState => {
-  switch (action.type) {
-    case 'INIT_TODO':
-      return action.payload.todos
-    case 'ADD_TODO':
+  const ownAction = action as ToDoAction
+  switch (ownAction.type) {
+    case 'todos/INIT_TODO':
+      return ownAction.payload.todos
+    case 'todos/ADD_TODO':
       return [
         ...state,
         {
           id: Math.max(...state.map((todo): number => todo.id), 0) + 1,
-          text: action.payload.text,
+          text: ownAction.payload.text,
           completed: false,
           nextToDos: [],
         },
       ]
-    case 'ADD_DEPENDENCE':
+    case 'todos/ADD_DEPENDENCE':
       return state.map(
         (todo): ToDo =>
-          todo.id === action.payload.fromId
-            ? { ...todo, nextToDos: [...todo.nextToDos, action.payload.toId] }
+          todo.id === ownAction.payload.fromId
+            ? {
+                ...todo,
+                nextToDos: [...todo.nextToDos, ownAction.payload.toId],
+              }
             : todo
       )
-    case 'REMOVE_DEPENDENCE':
+    case 'todos/REMOVE_DEPENDENCE':
       return state.map<ToDo>(
         (todo): ToDo =>
-          todo.id === action.payload.fromId
+          todo.id === ownAction.payload.fromId
             ? {
                 ...todo,
                 nextToDos: todo.nextToDos.filter(
-                  (dependence): boolean => dependence !== action.payload.toId
+                  (dependence): boolean => dependence !== ownAction.payload.toId
                 ),
               }
             : todo
       )
-    case 'TOGGLE_TODO':
+    case 'todos/TOGGLE_TODO':
       return state.map(
         (todo): ToDo =>
-          todo.id === action.payload.id
+          todo.id === ownAction.payload.id
             ? { ...todo, completed: !todo.completed }
             : todo
       )
-    case 'CHANGE_TODO_TEXT':
+    case 'todos/CHANGE_TODO_TEXT':
       return state.map(
         (todo): ToDo =>
-          todo.id === action.payload.id
-            ? { ...todo, text: action.payload.text }
+          todo.id === ownAction.payload.id
+            ? { ...todo, text: ownAction.payload.text }
             : todo
       )
-    case 'DELETE_TODO': {
+    case 'todos/DELETE_TODO': {
       const todoNowDeleted = state.find(
-        (todo): boolean => todo.id === action.payload.id
+        (todo): boolean => todo.id === ownAction.payload.id
       )
       if (todoNowDeleted === undefined) return state
       return (
         state
-          .filter((todo): boolean => todo.id !== action.payload.id)
+          .filter((todo): boolean => todo.id !== ownAction.payload.id)
           // リンクを繋ぎ直す
           .map(
             (todo): ToDo => {
               const isDependedOnDeletedNode = todo.nextToDos.some(
-                (dependence): boolean => dependence === action.payload.id
+                (dependence): boolean => dependence === ownAction.payload.id
               )
               return isDependedOnDeletedNode
                 ? {
@@ -74,7 +79,7 @@ export const todosReducer: Reducer<ToDoState, ToDoAction> = (
                     nextToDos: todo.nextToDos
                       .filter(
                         (dependence): boolean =>
-                          dependence !== action.payload.id
+                          dependence !== ownAction.payload.id
                       )
                       .concat(todoNowDeleted.nextToDos),
                   }
@@ -83,6 +88,15 @@ export const todosReducer: Reducer<ToDoState, ToDoAction> = (
           )
       )
     }
+    default:
+  }
+  const persistRemoteStoreAction = action as PersistRemoteStoreAction
+  switch (persistRemoteStoreAction.type) {
+    case 'persistRemoteStore/RECIEVED':
+      return persistRemoteStoreAction.payload.data as ToDo[]
+    default:
+  }
+  switch (action.type) {
     default:
       return state
   }

@@ -10,6 +10,14 @@ It is a simple ToDo with dependency expressed by DAG
 3. Let's start with Blue ToDo's!
 
 ### Tasks
-- Connect to remote DB
 - Add test
 - Improve UI/UX
+
+### How to run
+1. client
+   - `yarn`
+   - `yarn start`
+2. server
+   - `pipenv install`
+   - `python3 server.py`
+   - `redis-server --port 3002`

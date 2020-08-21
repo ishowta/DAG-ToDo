@@ -1,21 +1,25 @@
 import { ViewerState, VisibilityFilters } from '../stores/viewer'
 import { ViewerAction } from '../actions/viewer'
-import { Reducer } from 'redux'
+import { Reducer, AnyAction } from 'redux'
 
 const initState: ViewerState = {
   visibilityFilter: VisibilityFilters.SHOW_ALL,
   forcusedToDo: null,
 }
 
-export const viewerReducer: Reducer<ViewerState, ViewerAction> = (
-  state: ViewerState = initState,
-  action: ViewerAction
+export const viewerReducer: Reducer<ViewerState, AnyAction> = (
+  state = initState,
+  action
 ): ViewerState => {
+  const ownAction = action as ViewerAction
+  switch (ownAction.type) {
+    case 'viewer/SET_VISIBILITY_FILTER':
+      return { ...state, visibilityFilter: ownAction.payload.filter }
+    case 'viewer/FOCUS_TODO':
+      return { ...state, forcusedToDo: ownAction.payload.id }
+    default:
+  }
   switch (action.type) {
-    case 'SET_VISIBILITY_FILTER':
-      return { ...state, visibilityFilter: action.payload.filter }
-    case 'FOCUS_TODO':
-      return { ...state, forcusedToDo: action.payload.id }
     default:
       return state
   }

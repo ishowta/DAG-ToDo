@@ -19,7 +19,7 @@ It is a simple ToDo with dependency expressed by DAG
    - Copy `.env.sample` to `.env` and fill it
    - `yarn start`
 2. server
-   ` `pipenv --python 3`
+   - `pipenv --python 3`
    - `pipenv install`
    - `pipenv shell`
    - `python3 server.py`

@@ -1,17 +1,17 @@
 import React from 'react'
+import { Provider } from 'react-redux'
+import { PersistGate } from 'redux-persist/integration/react'
 import ReactDOM from 'react-dom'
-import './index.css'
 import App from './containers/App'
 import * as serviceWorker from './serviceWorker'
 import { persistor, store } from './store'
-import { Provider } from 'react-redux'
-import { PersistGate } from 'redux-persist/integration/react'
 import { checkIsRemoteMode } from './router'
+import './index.css'
 
 ReactDOM.render(
   <Provider store={store}>
     {checkIsRemoteMode() ? (
-      <PersistGate loading={'Loading...'} persistor={persistor}>
+      <PersistGate loading="Loading..." persistor={persistor}>
         <App />
       </PersistGate>
     ) : (

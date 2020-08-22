@@ -8,9 +8,8 @@ export const todoPersister: Middleware<Record<string, unknown>, RootState> = (
   next(action)
 
   if ((action.type as string).startsWith('todos/')) {
-    const todos = api.getState().todos
-    checkIsRemoteMode() &&
-      todos.length !== 0 &&
+    const { todos } = api.getState()
+    if (checkIsRemoteMode() && todos.length !== 0) {
       api.dispatch({
         type: 'persistRemoteStore/SEND',
         payload: {
@@ -18,5 +17,6 @@ export const todoPersister: Middleware<Record<string, unknown>, RootState> = (
           path: `${process.env.REACT_APP_SERVER_ADDRESS}/${getRoomName()}`,
         },
       })
+    }
   }
 }

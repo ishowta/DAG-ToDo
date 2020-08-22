@@ -1,19 +1,27 @@
 import React from 'react'
-import { ButtonProps } from '@material-ui/core'
-import { Button } from '@material-ui/core'
+import { ButtonProps, Button as MaterialUIButton } from '@material-ui/core'
+
+export const Button: React.FC<React.DetailedHTMLProps<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+>> = ({ children, ...props }) => (
+  <button type="button" {...props}>
+    {children}
+  </button>
+)
 
 export const DoneUndoButton: React.FC<
   { completed: boolean } & Omit<ButtonProps, 'children'>
 > = ({ completed, ...props }) => (
-  <Button size="small" color="primary" {...props}>
+  <MaterialUIButton size="small" color="primary" {...props}>
     {completed ? 'Undo' : 'Done'}
-  </Button>
+  </MaterialUIButton>
 )
 
 export const DeleteButton: React.FC<Omit<ButtonProps, 'children'>> = (
   props
 ) => (
-  <Button size="small" color="secondary" {...props}>
+  <MaterialUIButton size="small" color="secondary" {...props}>
     Delete
-  </Button>
+  </MaterialUIButton>
 )

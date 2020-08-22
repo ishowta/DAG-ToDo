@@ -1,6 +1,6 @@
 import { Middleware, Dispatch } from 'redux'
-import { RootState } from '../stores'
 import axios from 'axios'
+import { RootState } from '../stores'
 
 export type PersistRemoteStoreAction =
   | {
@@ -20,9 +20,10 @@ export type PersistRemoteStoreAction =
 
 class PersistRemoteStoreEventSourceConnector {
   source: EventSource | null = null
+
   connect(dispatch: Dispatch<PersistRemoteStoreAction>, path: string) {
     this.source = new EventSource(path)
-    this.source.onmessage = function (event) {
+    this.source.onmessage = (event) => {
       dispatch({
         type: 'persistRemoteStore/RECIEVED',
         payload: { data: JSON.parse(event.data) },
@@ -47,6 +48,5 @@ export const persistRemoteStore: Middleware<
     }
     case 'persistRemoteStore/CONNECT':
       connecter.connect(api.dispatch, ownAction.payload.path)
-      return
   }
 }

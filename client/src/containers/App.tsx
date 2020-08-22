@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { Dispatch } from 'redux'
 import { getRoomName, checkIsRemoteMode } from '../router'
 import {
   ToDoListWrapper,
@@ -13,8 +15,6 @@ import ToDoViewer from './ToDoViewer'
 import { useSelector } from '../stores'
 import { ToDo } from '../stores/todos'
 import { VisibilityFilters } from '../stores/viewer'
-import { useDispatch } from 'react-redux'
-import { Dispatch } from 'redux'
 import { PersistRemoteStoreAction } from '../middleware/persistRemoteStore'
 
 const App: React.FC = () => {
@@ -36,13 +36,14 @@ const App: React.FC = () => {
   })()
 
   useEffect(() => {
-    checkIsRemoteMode() &&
+    if (checkIsRemoteMode()) {
       dispatch({
         type: 'persistRemoteStore/CONNECT',
         payload: {
           path: `${process.env.REACT_APP_SERVER_ADDRESS}/${getRoomName()}`,
         },
       })
+    }
   }, [dispatch])
 
   return (

@@ -1,7 +1,7 @@
 import React from 'react'
 import { render } from '@testing-library/react'
-import App from '../containers/App'
 import { Provider } from 'react-redux'
+import App from '../containers/App'
 import { store } from '../store'
 
 test('render', () => {

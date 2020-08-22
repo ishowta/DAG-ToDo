@@ -1,15 +1,16 @@
 import React from 'react'
+import { DeepReadonly } from 'utility-types'
 import { ToDo } from '../stores/todos'
 import ToDoView from './ToDoCard'
 import { ToDoListInner } from './styles/ToDoList.style'
-import { DeepReadonly } from 'utility-types'
 
 const ToDoList: React.FC<DeepReadonly<{
   todos: ToDo[]
 }>> = (props) => {
+  const { todos } = props
   return (
     <ToDoListInner>
-      {props.todos.map((todo) => (
+      {todos.map((todo) => (
         <ToDoView key={todo.id} todo={todo} />
       ))}
     </ToDoListInner>

@@ -1,6 +1,6 @@
+import { Reducer, AnyAction } from 'redux'
 import { ViewerState, VisibilityFilters } from '../stores/viewer'
 import { ViewerAction } from '../actions/viewer'
-import { Reducer, AnyAction } from 'redux'
 
 const initState: ViewerState = {
   visibilityFilter: VisibilityFilters.SHOW_ALL,

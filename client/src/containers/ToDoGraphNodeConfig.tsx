@@ -1,43 +1,26 @@
 import React from 'react'
 import { INode, IEdge } from 'react-digraph'
+import { DeepReadonly } from 'utility-types'
 
 const NormalShape = (
   <symbol viewBox="0 0 200 100" id="normal">
-    <rect
-      x="0"
-      y="0"
-      width="200"
-      height="100"
-      fill="rgba(255, 255, 255, 1)"
-    ></rect>
+    <rect x="0" y="0" width="200" height="100" fill="rgba(255, 255, 255, 1)" />
   </symbol>
 )
 
 const ActiveShape = (
   <symbol viewBox="0 0 200 100" id="active">
-    <rect
-      x="0"
-      y="0"
-      width="200"
-      height="100"
-      fill="rgba(30, 144, 255, 1)"
-    ></rect>
+    <rect x="0" y="0" width="200" height="100" fill="rgba(30, 144, 255, 1)" />
   </symbol>
 )
 
 const DoneShape = (
   <symbol viewBox="0 0 200 100" id="done">
-    <rect
-      x="0"
-      y="0"
-      width="200"
-      height="100"
-      fill="rgba(176, 196, 222, 1)"
-    ></rect>
+    <rect x="0" y="0" width="200" height="100" fill="rgba(176, 196, 222, 1)" />
   </symbol>
 )
 
-const NormalEdgeShape = <symbol viewBox="0 0 50 50" id="normalEdge"></symbol>
+const NormalEdgeShape = <symbol viewBox="0 0 50 50" id="normalEdge" />
 
 export type ToDoGraphNode = INode & {
   type: 'NORMAL' | 'ACTIVE' | 'DONE'
@@ -48,7 +31,7 @@ export type ToDoGraphEdge = IEdge & {
   type: 'NORMAL'
 }
 
-const NodeConfig: {
+const NodeConfig: DeepReadonly<{
   NodeTypes: {
     [key in ToDoGraphNode['type']]: {
       typeText: string
@@ -63,7 +46,7 @@ const NodeConfig: {
       shape: JSX.Element
     }
   }
-} = {
+}> = {
   NodeTypes: {
     NORMAL: {
       typeText: '',

@@ -5,12 +5,27 @@ module.exports = {
     es2020: true,
   },
   extends: [
-    'plugin:prettier/recommended',
+    // plugins
     'eslint:recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings',
     'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+    'plugin:jsx-a11y/recommended',
+
+    // configs
+    'airbnb',
+
+    // plugins for typescript
     'plugin:@typescript-eslint/recommended',
+    'plugin:import/typescript',
+
+    // configs for typescript
+
+    // formatter
+    'plugin:prettier/recommended',
+    'prettier/react',
     'prettier/@typescript-eslint',
-    'eslint-config-prettier',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -24,26 +39,56 @@ module.exports = {
   settings: {
     "react": {
       "version": "detect"
-    }
+    },
+    'import/extensions': [".js",".jsx",".ts",".tsx"],
+    'import/parsers': {
+      '@typescript-eslint/parser': [".ts",".tsx"]
+     },
+     'import/resolver': {
+         'node': {
+             'extensions': [".js",".jsx",".ts",".tsx"]
+         }
+     }
   },
   rules: {
-    // Because let define 'let' not 'const'
-    'prefer-const': 'off',
-
-    // Here is typescript
-    "react/prop-types": 'off',
-
     // Use CamelCase
     "camelcase": ['error', {
       'properties':'always'
     }],
 
-    // We should use preserverd functions
+    // We should use preserverd code
     "@typescript-eslint/no-empty-function": 'off',
     "@typescript-eslint/no-unused-vars" : [
       'warn',
       {argsIgnorePattern: '^_'}
     ],
+    "import/prefer-default-export": 'off',
+
+    // props spreading is needed by HOC
+    "react/jsx-props-no-spreading": 'off',
+
+    // `switch` is not expression
+    "no-nested-ternary": 'off',
+
+    // Not true
+    "no-use-before-define": 'off',
+
+    // Give up support for older OS
+    "jsx-a11y/label-has-associated-control": [ 2, {
+      "labelComponents": ["CustomLabel"],
+      "labelAttributes": ["inputLabel"],
+      "controlComponents": ["CustomInput"],
+      "assert": "either",
+      "depth": 3,
+    }],
+
+    // Erase only javascripts rules
+    "react/prop-types": 'off',
+    "import/extensions":['error','never'],
+    "react/jsx-filename-extension": 'off',
+    "default-case": 'off',
+    "consistent-return": 'off',
+    "no-param-reassign": ["error", { "props": false }],
   },
   overrides:[
     {

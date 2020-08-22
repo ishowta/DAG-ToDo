@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import { GraphView, INode, IEdge } from 'react-digraph'
+import { GraphView, INode, IEdge, GraphUtils } from 'react-digraph'
+import { useDispatch } from 'react-redux'
+import Lazy from 'lazy.js'
+import { Dispatch } from 'redux'
+import { DeepReadonly } from 'utility-types'
 import ToDoGraphNodeConfig, {
   ToDoGraphNode,
   ToDoGraphEdge,
 } from './ToDoGraphNodeConfig'
-import { GraphUtils } from 'react-digraph'
-import { useDispatch } from 'react-redux'
+
 import { ToDo } from '../stores/todos'
-import { comp, makeDictFromArray } from '../type-utils'
+import { comp, makeDictFromArray, bucket } from '../type-utils'
 import { GraphInner } from './styles/ToDoGraph.style'
-import Lazy from 'lazy.js'
-import { Dispatch } from 'redux'
 import { ToDoAction } from '../actions/todos'
 import { ViewerAction } from '../actions/viewer'
-import { DeepReadonly } from 'utility-types'
 
 // https://stackoverflow.com/questions/2057682/determine-pixel-length-of-string-in-javascript-jquery
 let e: HTMLSpanElement
@@ -26,15 +26,15 @@ function getWidthOfText(txt: string, fontname = '', fontsize = '8px'): number {
   e.style.fontSize = fontsize
   e.style.fontFamily = fontname
   e.innerText = txt
-  let res = e.offsetWidth
+  const res = e.offsetWidth
   e.style.display = 'none'
   return res
 }
 
 function chunk(str: string, chunkSize: number): string[] {
-  let strSize = getWidthOfText(str)
-  let chunkCount = Math.ceil(strSize / chunkSize)
-  let chunkLength = Math.ceil(str.length / chunkCount)
+  const strSize = getWidthOfText(str)
+  const chunkCount = Math.ceil(strSize / chunkSize)
+  const chunkLength = Math.ceil(str.length / chunkCount)
   return Lazy.range(chunkCount)
     .map((i) =>
       str.slice(chunkLength * i, Math.min(chunkLength * (i + 1), str.length))
@@ -49,7 +49,7 @@ const ToDoGraphNodeText: React.FC<DeepReadonly<{
 }>> = (props) => {
   const { data, isSelected } = props
   const lineOffset = 18
-  const title = data.title
+  const { title } = data
   const className = GraphUtils.classNames('node-text', {
     selected: isSelected,
   })
@@ -57,14 +57,14 @@ const ToDoGraphNodeText: React.FC<DeepReadonly<{
   const renderText = () => {
     const lines = chunk(data.title, 100)
     return lines.slice(0, 2).map((text, i) => (
-      <tspan x={0} y={lineOffset * i} fontSize="12px" key={i}>
+      <tspan x={0} y={lineOffset * i} fontSize="12px">
         {text + (i === 1 && lines.length > 2 ? '...' : '')}
       </tspan>
     ))
   }
 
   return (
-    <text className={className + ' wraptext'} textAnchor="middle">
+    <text className={`${className} wraptext`} textAnchor="middle">
       {title && renderText()}
       {title && <title>{title}</title>}
     </text>
@@ -85,25 +85,30 @@ type Edge = {
 }
 class Graph {
   nodeList: Node[]
+
   edgeList: Edge[]
+
   depthList: number[]
+
   nodeNth: number[]
+
   constructor(todos: DeepReadonly<ToDo[]>) {
     this.nodeList = todos.map((todo: ToDo, index: number) => ({
-      index: index,
+      index,
       data: todo,
       parentNodes: [],
       childNodes: [],
     }))
 
-    for (let node of this.nodeList) {
+    this.nodeList.forEach((node) => {
       node.childNodes = node.data.nextToDos.map(
-        (id) => this.nodeList.find((node) => node.data.id === id) as Node
+        (nextTodoId) =>
+          this.nodeList.find((n) => n.data.id === nextTodoId) as Node
       )
-      for (let childNode of node.childNodes) {
+      node.childNodes.forEach((childNode) => {
         childNode.parentNodes.push(node)
-      }
-    }
+      })
+    })
 
     this.edgeList = this.nodeList.flatMap((node) =>
       node.childNodes.map((childNode) => {
@@ -123,14 +128,14 @@ class Graph {
     this.nodeNth = this.calcNodeNth(this.depthList)
 
     // Activeなタスクを探してマークをつける
-    let activeNodeList = this.nodeList.map(
+    const activeNodeList = this.nodeList.map(
       (n) =>
         n.data.completed === false &&
         n.parentNodes.every((p) => p.data.completed)
     )
 
     // nodes
-    for (let [i, node] of this.nodeList.entries()) {
+    this.nodeList.forEach((node, i) => {
       node.view = {
         id: node.data.id,
         title: node.data.text,
@@ -142,51 +147,52 @@ class Graph {
           ? 'ACTIVE'
           : 'NORMAL',
       }
-    }
+    })
 
     // edges
-    for (let edge of this.edgeList) {
+    this.edgeList.forEach((edge) => {
       edge.view = {
         source: edge.source.data.id.toString(),
         target: edge.target.data.id.toString(),
         type: 'NORMAL',
       }
-    }
+    })
   }
 
   private calcDepthList(): number[] {
-    let depthList: number[] = this.nodeList.map(() => 0)
+    const depthList: number[] = this.nodeList.map(() => 0)
 
     const updateDepth = (node: Node) => {
-      for (let childNode of node.childNodes) {
+      node.childNodes.forEach((childNode) => {
         if (depthList[node.index] >= depthList[childNode.index]) {
           depthList[childNode.index] = depthList[node.index] + 1
           updateDepth(childNode)
         }
-      }
+      })
     }
 
-    for (let node of this.nodeList) updateDepth(node)
+    this.nodeList.forEach((node) => updateDepth(node))
 
     return depthList
   }
 
   private calcNodeNth(depthList: number[]): number[] {
-    let nodeNth = this.nodeList.map(() => 0)
+    const nodeNth = this.nodeList.map(() => 0)
     const maxDepth = Math.max(...depthList, 0) + 1
-    const nDepthNodeList = (() => {
-      let nDepthNodeList = Lazy.range(maxDepth)
-        .map((): Node[] => [])
-        .toArray()
-      for (const [index, depth] of depthList.entries())
-        nDepthNodeList[depth].push(this.nodeList[index])
-      return nDepthNodeList
-    })()
+    const nDepthNodeList: DeepReadonly<Node[][]> = bucket(
+      depthList,
+      maxDepth,
+      (depth, i) => {
+        return { index: depth, value: this.nodeList[i as number] }
+      }
+    )
 
     // それぞれの深さのノードを、親ノードのもっとも右の位置でソートしてから追加していく
-    for (const nDepthNodes of nDepthNodeList) {
+    nDepthNodeList.forEach((nDepthNodes) => {
       // 親ノードのもっとも右の位置
-      const parentMaxNth = makeDictFromArray(nDepthNodes, (n) => {
+      const parentMaxNth: DeepReadonly<{
+        [key: string]: number
+      }> = makeDictFromArray(nDepthNodes, (n) => {
         return {
           key: n.index.toString(),
           value: Math.max(...n.parentNodes.map((p) => nodeNth[p.index]), 0),
@@ -194,18 +200,20 @@ class Graph {
       })
 
       // ソート
-      const sortedNDepthNodes = nDepthNodes.sort((a, b) =>
-        comp(parentMaxNth[a.index], parentMaxNth[b.index])
-      )
+      const sortedNDepthNodes: DeepReadonly<
+        Node[]
+      > = nDepthNodes
+        .slice()
+        .sort((a, b) => comp(parentMaxNth[a.index], parentMaxNth[b.index]))
 
       // 左から追加していく
       let currentNth = 0
-      for (const node of sortedNDepthNodes) {
+      sortedNDepthNodes.forEach((node) => {
         currentNth = Math.max(currentNth, parentMaxNth[node.index])
         nodeNth[node.index] = currentNth
         currentNth += 1
-      }
-    }
+      })
+    })
     return nodeNth
   }
 }
@@ -213,12 +221,13 @@ class Graph {
 const ToDoGraph: React.FC<DeepReadonly<{
   todos: ToDo[]
 }>> = (props) => {
+  const { todos } = props
   const dispatch: Dispatch<ToDoAction | ViewerAction> = useDispatch()
-  const [graph, updateGraph] = useState(new Graph(props.todos))
+  const [graph, updateGraph] = useState(new Graph(todos))
 
   useEffect(() => {
-    updateGraph(new Graph(props.todos)) // Slow
-  }, [props.todos])
+    updateGraph(new Graph(todos)) // Slow
+  }, [todos])
 
   /*
    * Handlers/Interaction
@@ -226,9 +235,9 @@ const ToDoGraph: React.FC<DeepReadonly<{
 
   const findEdge = (viewEdge: IEdge) =>
     graph.edgeList.find(
-      (e) =>
-        e.source.data.id.toString() === viewEdge.source &&
-        e.target.data.id.toString() === viewEdge.target
+      (edge) =>
+        edge.source.data.id.toString() === viewEdge.source &&
+        edge.target.data.id.toString() === viewEdge.target
     )
 
   // Called by 'drag' handler, etc..
@@ -238,7 +247,7 @@ const ToDoGraph: React.FC<DeepReadonly<{
   // Node 'mouseUp' handler
   const onSelectNode = (viewNode: INode | null) => {
     if (viewNode !== null) {
-      //dispatch(toggleToDo(viewNode.id))
+      // dispatch(toggleToDo(viewNode.id))
       dispatch({
         type: 'viewer/FOCUS_TODO',
         payload: { id: viewNode.id },
@@ -282,24 +291,24 @@ const ToDoGraph: React.FC<DeepReadonly<{
     let findCloseNetworkRing = false
 
     const searchCloseNetwork = (currentNode: Node, marking: boolean[]) => {
-      for (const childNode of currentNode.childNodes) {
+      currentNode.childNodes.forEach((childNode) => {
         if (marking[childNode.index]) {
           findCloseNetworkRing = true
           return
         }
-        let newMarking = [...marking]
+        const newMarking = [...marking]
         newMarking[childNode.index] = true
         searchCloseNetwork(childNode, newMarking)
-      }
+      })
     }
 
-    for (const [index, depth] of graph.depthList.entries()) {
+    graph.depthList.forEach((depth, index) => {
       if (depth === 0) {
-        let marking = graph.nodeList.map(() => false)
+        const marking = graph.nodeList.map(() => false)
         marking[index] = true
         searchCloseNetwork(graph.nodeList[index], marking)
       }
-    }
+    })
 
     const isLoop = viewEdge.source === viewEdge.target
 
@@ -311,8 +320,6 @@ const ToDoGraph: React.FC<DeepReadonly<{
           toId: Number(viewEdge.target),
         },
       })
-    } else {
-      console.log('Invalid edge!')
     }
   }
 
@@ -329,8 +336,8 @@ const ToDoGraph: React.FC<DeepReadonly<{
     <GraphInner id="graph">
       <GraphView
         nodeKey="id"
-        nodes={graph.nodeList.map((n) => n.view)}
-        edges={graph.edgeList.map((e) => e.view)}
+        nodes={graph.nodeList.map((node) => node.view)}
+        edges={graph.edgeList.map((edge) => edge.view)}
         selected={[]}
         nodeTypes={ToDoGraphNodeConfig.NodeTypes}
         nodeSubtypes={ToDoGraphNodeConfig.NodeSubtypes}

@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import { ToDo } from '../stores/todos'
 import { useDispatch } from 'react-redux'
+import { Dispatch } from 'redux'
+import { DeepReadonly } from 'utility-types'
+import { ToDo } from '../stores/todos'
 import { ViewerInner } from './styles/Viewer.style'
 import { getRoomName } from '../router'
 import { DoneUndoButton, DeleteButton } from '../components/Buttons'
-import { Dispatch } from 'redux'
 import { ToDoAction } from '../actions/todos'
-import { DeepReadonly } from 'utility-types'
 
 const ToDoViewer: React.FC<DeepReadonly<{
   todo: ToDo
@@ -17,7 +17,7 @@ const ToDoViewer: React.FC<DeepReadonly<{
 
   const LinkToScrapbox = () => (
     <a
-      href={'https://scrapbox.io/' + getRoomName + '/' + todo.text}
+      href={`https://scrapbox.io/${getRoomName}/${todo.text}`}
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -50,7 +50,7 @@ const ToDoViewer: React.FC<DeepReadonly<{
         <input type="submit" value="Submit" />
       </form>
       <div>
-        {props.todo.text}
+        {todo.text}
         <LinkToScrapbox />
       </div>
       <br />

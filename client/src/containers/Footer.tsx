@@ -1,10 +1,10 @@
 import React from 'react'
-import { VisibilityFilters } from '../stores/viewer'
-import Link from '../components/Link'
-import { useSelector } from '../stores'
 import { useDispatch } from 'react-redux'
-import { ViewerAction } from '../actions/viewer'
 import { Dispatch } from 'redux'
+import { VisibilityFilters } from '../stores/viewer'
+import { useSelector } from '../stores'
+import { ViewerAction } from '../actions/viewer'
+import { Button } from '../components/Buttons'
 
 const Footer: React.FC = () => {
   const dispatch: Dispatch<ViewerAction> = useDispatch()
@@ -12,8 +12,8 @@ const Footer: React.FC = () => {
   return (
     <div>
       <span>Show: </span>
-      <Link
-        active={filter !== VisibilityFilters.SHOW_ALL}
+      <Button
+        disabled={filter !== VisibilityFilters.SHOW_ALL}
         onClick={() =>
           dispatch({
             type: 'viewer/SET_VISIBILITY_FILTER',
@@ -22,9 +22,9 @@ const Footer: React.FC = () => {
         }
       >
         All
-      </Link>
-      <Link
-        active={filter !== VisibilityFilters.SHOW_ACTIVE}
+      </Button>
+      <Button
+        disabled={filter !== VisibilityFilters.SHOW_ACTIVE}
         onClick={() =>
           dispatch({
             type: 'viewer/SET_VISIBILITY_FILTER',
@@ -33,9 +33,9 @@ const Footer: React.FC = () => {
         }
       >
         Active
-      </Link>
-      <Link
-        active={filter !== VisibilityFilters.SHOW_COMPLETED}
+      </Button>
+      <Button
+        disabled={filter !== VisibilityFilters.SHOW_COMPLETED}
         onClick={() =>
           dispatch({
             type: 'viewer/SET_VISIBILITY_FILTER',
@@ -44,7 +44,7 @@ const Footer: React.FC = () => {
         }
       >
         Completed
-      </Link>
+      </Button>
     </div>
   )
 }

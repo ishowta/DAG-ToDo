@@ -1,12 +1,12 @@
 import React from 'react'
 import { CardContent } from '@material-ui/core'
-import { ToDoCardInner } from './styles/ToDo.style'
 import { DeepReadonly } from 'utility-types'
-import { ToDo } from '../stores/todos'
 import { useDispatch } from 'react-redux'
+import { Dispatch } from 'redux'
+import { ToDoCardInner } from './styles/ToDo.style'
+import { ToDo } from '../stores/todos'
 import { DoneUndoButton, DeleteButton } from '../components/Buttons'
 import { ToDoAction } from '../actions/todos'
-import { Dispatch } from 'redux'
 
 const ToDoCard: React.FC<DeepReadonly<{
   todo: ToDo

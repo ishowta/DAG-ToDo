@@ -1,6 +1,6 @@
+import { Reducer, AnyAction } from 'redux'
 import { ToDoState, ToDo } from '../stores/todos'
 import { ToDoAction } from '../actions/todos'
-import { Reducer, AnyAction } from 'redux'
 import { PersistRemoteStoreAction } from '../middleware/persistRemoteStore'
 
 const initState: ToDoState = []

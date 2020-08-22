@@ -97,13 +97,6 @@ module.exports = {
           "allowTypedFunctionExpressions":false
         }],
       }
-    },
-    {
-      "files":["src/actions/**/*"],
-      "rules":{
-        // To reduce the redux boilerplate on ActionCreators
-        "@typescript-eslint/explicit-module-boundary-types": 'off',
-      }
     }
   ]
 }

@@ -17,7 +17,7 @@ const ToDoViewer: React.FC<DeepReadonly<{
 
   const LinkToScrapbox = () => (
     <a
-      href={`https://scrapbox.io/${getRoomName}/${todo.text}`}
+      href={`https://scrapbox.io/${getRoomName()}/${todo.text}`}
       target="_blank"
       rel="noopener noreferrer"
     >

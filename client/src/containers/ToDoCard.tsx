@@ -4,27 +4,37 @@ import { ToDoCardInner } from './styles/ToDo.style'
 import { DeepReadonly } from 'utility-types'
 import { ToDo } from '../stores/todos'
 import { useDispatch } from 'react-redux'
-import { todoActionCreators } from '../actions/todos'
 import { DoneUndoButton, DeleteButton } from '../components/Buttons'
+import { ToDoAction } from '../actions/todos'
+import { Dispatch } from 'redux'
 
-export type ToDoPropTypes = DeepReadonly<{
+const ToDoCard: React.FC<DeepReadonly<{
   todo: ToDo
-}>
-
-const ToDoCard: React.FC<ToDoPropTypes> = (props) => {
-  const dispatch = useDispatch()
+}>> = (props) => {
+  const dispatch: Dispatch<ToDoAction> = useDispatch()
   const { todo } = props
-  const { toggleToDo, deleteToDo } = todoActionCreators
   return (
     <ToDoCardInner>
       <CardContent>
         {todo.text}
         <br />
         <DoneUndoButton
-          onClick={() => dispatch(toggleToDo(todo.id))}
+          onClick={() =>
+            dispatch({
+              type: 'todos/TOGGLE_TODO',
+              payload: { id: todo.id },
+            })
+          }
           completed={todo.completed}
         />
-        <DeleteButton onClick={() => dispatch(deleteToDo(todo.id))} />
+        <DeleteButton
+          onClick={() =>
+            dispatch({
+              type: 'todos/DELETE_TODO',
+              payload: { id: todo.id },
+            })
+          }
+        />
       </CardContent>
     </ToDoCardInner>
   )

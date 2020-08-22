@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { todoActionCreators } from '../actions/todos'
 import { useDispatch } from 'react-redux'
+import { Dispatch } from 'redux'
+import { ToDoAction } from '../actions/todos'
 
 const AddToDo: React.FC = () => {
-  const dispatch = useDispatch()
-  const { addToDo } = todoActionCreators
+  const dispatch: Dispatch<ToDoAction> = useDispatch()
   const [todoText, setToDoText] = useState('')
 
   return (
@@ -16,7 +16,10 @@ const AddToDo: React.FC = () => {
           if (!todoText.trim()) {
             return
           }
-          dispatch(addToDo(todoText))
+          dispatch({
+            type: 'todos/ADD_TODO',
+            payload: { text: todoText },
+          })
           setToDoText('')
         }}
       >

@@ -1,18 +1,19 @@
 import React, { useState } from 'react'
 import { ToDo } from '../stores/todos'
 import { useDispatch } from 'react-redux'
-import { todoActionCreators } from '../actions/todos'
 import { ViewerInner } from './styles/Viewer.style'
 import { getRoomName } from '../util'
 import { DoneUndoButton, DeleteButton } from '../components/Buttons'
+import { Dispatch } from 'redux'
+import { ToDoAction } from '../actions/todos'
+import { DeepReadonly } from 'utility-types'
 
-const Viewer: React.FC<{
+const Viewer: React.FC<DeepReadonly<{
   todo: ToDo
-}> = (props) => {
-  const dispatch = useDispatch()
+}>> = (props) => {
+  const dispatch: Dispatch<ToDoAction> = useDispatch()
   const { todo } = props
   const [text, setText] = useState(todo.text)
-  const { toggleToDo, deleteToDo, changeToDoText } = todoActionCreators
 
   const LinkToScrapbox = () => (
     <a
@@ -33,7 +34,10 @@ const Viewer: React.FC<{
           if (!text.trim()) {
             return
           }
-          dispatch(changeToDoText(todo.id, text))
+          dispatch({
+            type: 'todos/CHANGE_TODO_TEXT',
+            payload: { id: todo.id, text },
+          })
         }}
       >
         <label>
@@ -53,9 +57,21 @@ const Viewer: React.FC<{
       <div>
         <DoneUndoButton
           completed={todo.completed}
-          onClick={() => dispatch(toggleToDo(todo.id))}
+          onClick={() =>
+            dispatch({
+              type: 'todos/TOGGLE_TODO',
+              payload: { id: todo.id },
+            })
+          }
         />
-        <DeleteButton onClick={() => dispatch(deleteToDo(todo.id))} />
+        <DeleteButton
+          onClick={() =>
+            dispatch({
+              type: 'todos/DELETE_TODO',
+              payload: { id: todo.id },
+            })
+          }
+        />
       </div>
     </ViewerInner>
   )

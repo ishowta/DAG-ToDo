@@ -43,7 +43,7 @@ const App: React.FC = () => {
           path: `${process.env.REACT_APP_SERVER_ADDRESS}/${getRoomName()}`,
         },
       })
-  }, [])
+  }, [dispatch])
 
   return (
     <div>

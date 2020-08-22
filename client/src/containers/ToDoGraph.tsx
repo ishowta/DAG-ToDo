@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react'
 import { GraphView, INode, IEdge } from 'react-digraph'
 import GraphConfig, { ToDoGraphNode, ToDoGraphEdge } from './Node'
 import { GraphUtils } from 'react-digraph'
-import { todoActionCreators } from '../actions/todos'
-import { viewerActionCreators } from '../actions/viewer'
 import { useDispatch } from 'react-redux'
 import { ToDo } from '../stores/todos'
 import { comp, makeDictFromArray } from '../type-utils'
 import { GraphInner } from './styles/ToDoGraph.style'
 import Lazy from 'lazy.js'
+import { Dispatch } from 'redux'
+import { ToDoAction } from '../actions/todos'
+import { ViewerAction } from '../actions/viewer'
+import { DeepReadonly } from 'utility-types'
 
 // https://stackoverflow.com/questions/2057682/determine-pixel-length-of-string-in-javascript-jquery
 let e: HTMLSpanElement
@@ -37,11 +39,11 @@ function chunk(str: string, chunkSize: number): string[] {
     .toArray()
 }
 
-const ToDoGraphNodeText: React.FC<{
+const ToDoGraphNodeText: React.FC<DeepReadonly<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any
   isSelected: boolean
-}> = (props) => {
+}>> = (props) => {
   const { data, isSelected } = props
   const lineOffset = 18
   const title = data.title
@@ -83,7 +85,7 @@ class Graph {
   edgeList: Edge[]
   depthList: number[]
   nodeNth: number[]
-  constructor(todos: ToDo[]) {
+  constructor(todos: DeepReadonly<ToDo[]>) {
     this.nodeList = todos.map((todo: ToDo, index: number) => ({
       index: index,
       data: todo,
@@ -205,11 +207,10 @@ class Graph {
   }
 }
 
-const ToDoGraph: React.FC<{ todos: ToDo[] }> = (props) => {
-  const { addDependence, removeDependence } = todoActionCreators
-  const dispatch = useDispatch()
-  const { focusToDo } = viewerActionCreators
-
+const ToDoGraph: React.FC<DeepReadonly<{
+  todos: ToDo[]
+}>> = (props) => {
+  const dispatch: Dispatch<ToDoAction | ViewerAction> = useDispatch()
   const [graph, updateGraph] = useState(new Graph(props.todos))
 
   useEffect(() => {
@@ -235,14 +236,23 @@ const ToDoGraph: React.FC<{ todos: ToDo[] }> = (props) => {
   const onSelectNode = (viewNode: INode | null) => {
     if (viewNode !== null) {
       //dispatch(toggleToDo(viewNode.id))
-      dispatch(focusToDo(viewNode.id))
+      dispatch({
+        type: 'viewer/FOCUS_TODO',
+        payload: { id: viewNode.id },
+      })
     }
   }
 
   // Edge 'mouseUp' handler
   // Remove the edge at select it
   const onSelectEdge = (edge: IEdge) => {
-    dispatch(removeDependence(Number(edge.source), Number(edge.target)))
+    dispatch({
+      type: 'todos/REMOVE_DEPENDENCE',
+      payload: {
+        fromId: Number(edge.source),
+        toId: Number(edge.target),
+      },
+    })
   }
 
   // Updates the graph with a new node
@@ -291,7 +301,13 @@ const ToDoGraph: React.FC<{ todos: ToDo[] }> = (props) => {
     const isLoop = viewEdge.source === viewEdge.target
 
     if (findCloseNetworkRing === false && isLoop === false) {
-      dispatch(addDependence(Number(viewEdge.source), Number(viewEdge.target)))
+      dispatch({
+        type: 'todos/ADD_DEPENDENCE',
+        payload: {
+          fromId: Number(viewEdge.source),
+          toId: Number(viewEdge.target),
+        },
+      })
     } else {
       console.log('Invalid edge!')
     }

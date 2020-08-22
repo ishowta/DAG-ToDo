@@ -1,24 +1,31 @@
-import { ActionsUnion } from '../type-utils'
 import { ToDo } from '../stores/todos'
-import { action } from 'typesafe-actions'
 
-export const todoActionCreators = {
-  init: (todos: ToDo[]) => action('todos/INIT_TODO', { todos }),
-
-  addToDo: (text: string) => action('todos/ADD_TODO', { text }),
-
-  addDependence: (fromId: number, toId: number) =>
-    action('todos/ADD_DEPENDENCE', { fromId, toId }),
-
-  removeDependence: (fromId: number, toId: number) =>
-    action('todos/REMOVE_DEPENDENCE', { fromId, toId }),
-
-  toggleToDo: (id: number) => action('todos/TOGGLE_TODO', { id }),
-
-  changeToDoText: (id: number, text: string) =>
-    action('todos/CHANGE_TODO_TEXT', { id, text }),
-
-  deleteToDo: (id: number) => action('todos/DELETE_TODO', { id }),
-}
-
-export type ToDoAction = ActionsUnion<typeof todoActionCreators>
+export type ToDoAction =
+  | {
+      type: 'todos/INIT_TODO'
+      payload: { todos: ToDo[] }
+    }
+  | {
+      type: 'todos/ADD_TODO'
+      payload: { text: string }
+    }
+  | {
+      type: 'todos/ADD_DEPENDENCE'
+      payload: { fromId: number; toId: number }
+    }
+  | {
+      type: 'todos/REMOVE_DEPENDENCE'
+      payload: { fromId: number; toId: number }
+    }
+  | {
+      type: 'todos/TOGGLE_TODO'
+      payload: { id: number }
+    }
+  | {
+      type: 'todos/CHANGE_TODO_TEXT'
+      payload: { id: number; text: string }
+    }
+  | {
+      type: 'todos/DELETE_TODO'
+      payload: { id: number }
+    }

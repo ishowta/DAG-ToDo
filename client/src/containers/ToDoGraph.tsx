@@ -328,8 +328,8 @@ const ToDoGraph: React.FC<{ todos: ToDo[] }> = (props) => {
         onDeleteEdge={onDeleteEdge}
         maxTitleChars={Infinity}
         nodeSize={150}
-        zoomDelay={2000}
-        zoomDur={300}
+        zoomDelay={100}
+        zoomDur={0}
         renderNodeText={(data, id, isSelected) => {
           return <ToDoGraphNodeText data={data} isSelected={isSelected} />
         }}

@@ -1,4 +1,4 @@
-export function isRemoteMode(): boolean {
+export function checkIsRemoteMode(): boolean {
   return getRoomName() !== null
 }
 

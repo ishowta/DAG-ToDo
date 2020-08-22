@@ -1,6 +1,6 @@
 import { Middleware } from 'redux'
 import { RootState } from '../stores'
-import { getRoomName, isRemoteMode } from '../util'
+import { getRoomName, checkIsRemoteMode } from '../router'
 
 export const todoPersister: Middleware<Record<string, unknown>, RootState> = (
   api
@@ -9,7 +9,7 @@ export const todoPersister: Middleware<Record<string, unknown>, RootState> = (
 
   if ((action.type as string).startsWith('todos/')) {
     const todos = api.getState().todos
-    isRemoteMode() &&
+    checkIsRemoteMode() &&
       todos.length !== 0 &&
       api.dispatch({
         type: 'persistRemoteStore/SEND',

@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { Dispatch } from 'redux'
 import { ToDoAction } from '../actions/todos'
 
-const AddToDo: React.FC = () => {
+const AppendToDoForm: React.FC = () => {
   const dispatch: Dispatch<ToDoAction> = useDispatch()
   const [todoText, setToDoText] = useState('')
 
@@ -34,4 +34,4 @@ const AddToDo: React.FC = () => {
   )
 }
 
-export default AddToDo
+export default AppendToDoForm

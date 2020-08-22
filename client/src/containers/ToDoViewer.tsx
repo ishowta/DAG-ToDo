@@ -2,13 +2,13 @@ import React, { useState } from 'react'
 import { ToDo } from '../stores/todos'
 import { useDispatch } from 'react-redux'
 import { ViewerInner } from './styles/Viewer.style'
-import { getRoomName } from '../util'
+import { getRoomName } from '../router'
 import { DoneUndoButton, DeleteButton } from '../components/Buttons'
 import { Dispatch } from 'redux'
 import { ToDoAction } from '../actions/todos'
 import { DeepReadonly } from 'utility-types'
 
-const Viewer: React.FC<DeepReadonly<{
+const ToDoViewer: React.FC<DeepReadonly<{
   todo: ToDo
 }>> = (props) => {
   const dispatch: Dispatch<ToDoAction> = useDispatch()
@@ -77,4 +77,4 @@ const Viewer: React.FC<DeepReadonly<{
   )
 }
 
-export default Viewer
+export default ToDoViewer

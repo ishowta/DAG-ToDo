@@ -6,11 +6,11 @@ import * as serviceWorker from './serviceWorker'
 import { persistor, store } from './store'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
-import { getRoomName } from './util'
+import { checkIsRemoteMode } from './router'
 
 ReactDOM.render(
   <Provider store={store}>
-    {getRoomName() === null ? (
+    {checkIsRemoteMode() ? (
       <PersistGate loading={'Loading...'} persistor={persistor}>
         <App />
       </PersistGate>

@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react'
-import { getRoomName, isRemoteMode } from '../util'
+import { getRoomName, checkIsRemoteMode } from '../router'
 import {
   ToDoListWrapper,
   ToDoGraphWrapper,
   TutrialCard,
 } from './styles/App.style'
 import ToDoGraph from './ToDoGraph'
-import AddToDo from './AddToDo'
+import AppendToDoForm from './AppendToDoForm'
 import Footer from './Footer'
 import ToDoList from './ToDoList'
-import Viewer from './Viewer'
+import ToDoViewer from './ToDoViewer'
 import { useSelector } from '../stores'
 import { ToDo } from '../stores/todos'
 import { VisibilityFilters } from '../stores/viewer'
@@ -36,7 +36,7 @@ const App: React.FC = () => {
   })()
 
   useEffect(() => {
-    isRemoteMode() &&
+    checkIsRemoteMode() &&
       dispatch({
         type: 'persistRemoteStore/CONNECT',
         payload: {
@@ -72,9 +72,9 @@ const App: React.FC = () => {
                   `}
           </TutrialCard>
         )}
-        <AddToDo />
+        <AppendToDoForm />
         <Footer />
-        {focusedTodo !== undefined && <Viewer todo={focusedTodo} />}
+        {focusedTodo !== undefined && <ToDoViewer todo={focusedTodo} />}
         <ToDoList todos={filteredToDos} />
       </ToDoListWrapper>
       <ToDoGraphWrapper>

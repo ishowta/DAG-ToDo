@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { GraphView, INode, IEdge } from 'react-digraph'
-import GraphConfig, { ToDoGraphNode, ToDoGraphEdge } from './Node'
+import ToDoGraphNodeConfig, {
+  ToDoGraphNode,
+  ToDoGraphEdge,
+} from './ToDoGraphNodeConfig'
 import { GraphUtils } from 'react-digraph'
 import { useDispatch } from 'react-redux'
 import { ToDo } from '../stores/todos'
@@ -329,9 +332,9 @@ const ToDoGraph: React.FC<DeepReadonly<{
         nodes={graph.nodeList.map((n) => n.view)}
         edges={graph.edgeList.map((e) => e.view)}
         selected={[]}
-        nodeTypes={GraphConfig.NodeTypes}
-        nodeSubtypes={GraphConfig.NodeSubtypes}
-        edgeTypes={GraphConfig.EdgeTypes}
+        nodeTypes={ToDoGraphNodeConfig.NodeTypes}
+        nodeSubtypes={ToDoGraphNodeConfig.NodeSubtypes}
+        edgeTypes={ToDoGraphNodeConfig.EdgeTypes}
         onSelectNode={onSelectNode}
         onCreateNode={onCreateNode}
         onUpdateNode={onUpdateNode}

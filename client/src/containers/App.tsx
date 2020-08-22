@@ -16,6 +16,7 @@ import { useSelector } from '../stores'
 import { ToDo } from '../stores/todos'
 import { VisibilityFilters } from '../stores/viewer'
 import { PersistRemoteStoreAction } from '../middleware/persistRemoteStore'
+import { config } from '../config'
 
 const App: React.FC = () => {
   const dispatch = useDispatch<Dispatch<PersistRemoteStoreAction>>()
@@ -40,7 +41,7 @@ const App: React.FC = () => {
       dispatch({
         type: 'persistRemoteStore/CONNECT',
         payload: {
-          path: `${process.env.REACT_APP_SERVER_ADDRESS}/${getRoomName()}`,
+          path: `${config.SERVER_ADDRESS}/${getRoomName() as string}`,
         },
       })
     }

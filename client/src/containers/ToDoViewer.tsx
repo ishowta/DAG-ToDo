@@ -4,7 +4,7 @@ import { Dispatch } from 'redux'
 import { DeepReadonly } from 'utility-types'
 import { ToDo } from '../stores/todos'
 import { ViewerInner } from './styles/Viewer.style'
-import { getRoomName } from '../router'
+import { getRoomName, checkIsRemoteMode } from '../router'
 import { DoneUndoButton, DeleteButton } from '../components/Buttons'
 import { ToDoAction } from '../actions/todos'
 
@@ -15,15 +15,18 @@ const ToDoViewer: React.FC<DeepReadonly<{
   const { todo } = props
   const [text, setText] = useState(todo.text)
 
-  const LinkToScrapbox = () => (
-    <a
-      href={`https://scrapbox.io/${getRoomName()}/${todo.text}`}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      (→ノート)
-    </a>
-  )
+  const LinkToScrapbox = () =>
+    checkIsRemoteMode() ? (
+      <a
+        href={`https://scrapbox.io/${getRoomName() as string}/${todo.text}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        (→ノート)
+      </a>
+    ) : (
+      <div />
+    )
 
   return (
     <ViewerInner>

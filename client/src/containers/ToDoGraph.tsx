@@ -44,18 +44,20 @@ function chunk(str: string, chunkSize: number): string[] {
 
 const ToDoGraphNodeText: React.FC<DeepReadonly<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: any
+  data: { title: string }
   isSelected: boolean
 }>> = (props) => {
-  const { data, isSelected } = props
+  const {
+    data: { title },
+    isSelected,
+  } = props
   const lineOffset = 18
-  const { title } = data
   const className = GraphUtils.classNames('node-text', {
     selected: isSelected,
   })
 
   const renderText = () => {
-    const lines = chunk(data.title, 100)
+    const lines = chunk(title, 100)
     return lines.slice(0, 2).map((text, i) => (
       <tspan x={0} y={lineOffset * i} fontSize="12px">
         {text + (i === 1 && lines.length > 2 ? '...' : '')}
@@ -233,6 +235,10 @@ const ToDoGraph: React.FC<DeepReadonly<{
    * Handlers/Interaction
    */
 
+  const checkHasId = (obj: unknown): obj is { id: string } => {
+    return (obj as { id: string }).id === 'string'
+  }
+
   const findEdge = (viewEdge: IEdge) =>
     graph.edgeList.find(
       (edge) =>
@@ -246,11 +252,12 @@ const ToDoGraph: React.FC<DeepReadonly<{
 
   // Node 'mouseUp' handler
   const onSelectNode = (viewNode: INode | null) => {
+    if (!checkHasId(viewNode)) throw new Error('type error')
     if (viewNode !== null) {
       // dispatch(toggleToDo(viewNode.id))
       dispatch({
         type: 'viewer/FOCUS_TODO',
-        payload: { id: viewNode.id },
+        payload: { id: Number(viewNode.id) },
       })
     }
   }
@@ -275,6 +282,8 @@ const ToDoGraph: React.FC<DeepReadonly<{
 
   // Create or Delete a new edge between two nodes
   const onCreateEdge = (sourceViewNode: INode, targetViewNode: INode) => {
+    if (!checkHasId(sourceViewNode) || !checkHasId(targetViewNode))
+      throw new Error('type error')
     const viewEdge: ToDoGraphEdge = {
       source: sourceViewNode.id,
       target: targetViewNode.id,
@@ -357,6 +366,9 @@ const ToDoGraph: React.FC<DeepReadonly<{
         zoomDelay={100}
         zoomDur={0}
         renderNodeText={(data, id, isSelected) => {
+          const isValidData = (d: unknown): d is { title: string } =>
+            typeof (d as { title: string }).title === 'string'
+          if (!isValidData(data)) throw new Error('type error')
           return <ToDoGraphNodeText data={data} isSelected={isSelected} />
         }}
       />

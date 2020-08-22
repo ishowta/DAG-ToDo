@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { DeepReadonly } from 'utility-types'
-
 export type OnClickType = (
   event: React.MouseEvent<HTMLButtonElement, MouseEvent>
 ) => void
@@ -14,10 +12,10 @@ export type ActionsUnion<
 > = Exclude<ReturnType<A[keyof A]>, (...args: any[]) => Promise<void>>
 
 export function makeDictFromArray<T extends unknown, U extends unknown>(
-  arr: DeepReadonly<T[]>,
+  arr: T[], // Couldn't change type to DeepReadonly because typescript error
   callbackfn: (value: T, index?: number) => { key: string; value: U }
 ): { [key: string]: U } {
-  return arr.reduce<{ [key: string]: U }>((dict, value, index) => {
+  return arr.reduce<{ [key: string]: U }>((dict, value, index, array) => {
     const res = callbackfn(value, index)
     dict[res.key] = res.value
     return dict
@@ -29,7 +27,7 @@ export function bucket<T, U>(
   length: number,
   callbackfn: (value: T, index?: number) => { index: number; value: U }
 ): U[][] {
-  const newArr: U[][] = new Array(length)
+  const newArr = new Array<U[]>(length)
   arr.forEach((value, i) => {
     const { index: resIndex, value: resValue } = callbackfn(value, i)
     newArr[resIndex].push(resValue)

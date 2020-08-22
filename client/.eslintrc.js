@@ -5,22 +5,17 @@ module.exports = {
     es2020: true,
   },
   extends: [
-    // plugins
     'eslint:recommended',
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
     'plugin:jsx-a11y/recommended',
-
-    // configs
-    'airbnb',
-
-    // plugins for typescript
+    'airbnb/hooks',
     'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'plugin:import/typescript',
-
-    // configs for typescript
+    'airbnb-typescript',
 
     // formatter
     'plugin:prettier/recommended',
@@ -29,6 +24,7 @@ module.exports = {
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
+    project: './tsconfig.json',
     ecmaFeatures: {
       jsx: true,
     },
@@ -72,6 +68,7 @@ module.exports = {
 
     // Not true
     "no-use-before-define": 'off',
+    "@typescript-eslint/no-use-before-define":'off',
 
     // Give up support for older OS
     "jsx-a11y/label-has-associated-control": [ 2, {

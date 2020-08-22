@@ -26,6 +26,7 @@ class PersistRemoteStoreEventSourceConnector {
     this.source.onmessage = (event) => {
       dispatch({
         type: 'persistRemoteStore/RECIEVED',
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         payload: { data: JSON.parse(event.data) },
       })
     }
@@ -43,7 +44,11 @@ export const persistRemoteStore: Middleware<
   const ownAction = action as PersistRemoteStoreAction
   switch (ownAction.type) {
     case 'persistRemoteStore/SEND': {
-      axios.post(ownAction.payload.path, JSON.stringify(action.payload.data))
+      axios
+        .post(ownAction.payload.path, JSON.stringify(ownAction.payload.data))
+        .catch((reason) => {
+          throw new Error(reason)
+        })
       return
     }
     case 'persistRemoteStore/CONNECT':

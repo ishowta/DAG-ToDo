@@ -9,7 +9,8 @@ module.exports = {
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
+    // https://github.com/facebook/react/issues/18208
+    // 'plugin:react-hooks/recommended',
     'plugin:jsx-a11y/recommended',
     'airbnb/hooks',
     'plugin:@typescript-eslint/recommended',
@@ -31,7 +32,7 @@ module.exports = {
     ecmaVersion: 11,
     sourceType: 'module',
   },
-  plugins: [],
+  plugins: ['react-hooks'],
   settings: {
     "react": {
       "version": "detect"
@@ -91,6 +92,10 @@ module.exports = {
     "default-case": 'off',
     "consistent-return": 'off',
     "no-param-reassign": ["error", { "props": false }],
+  
+    // React-hooks
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
   },
   overrides:[
     {

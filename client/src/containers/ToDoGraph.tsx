@@ -59,7 +59,8 @@ const ToDoGraphNodeText: React.FC<DeepReadonly<{
   const renderText = () => {
     const lines = chunk(title, 100)
     return lines.slice(0, 2).map((text, i) => (
-      <tspan x={0} y={lineOffset * i} fontSize="12px">
+      // eslint-disable-next-line react/no-array-index-key
+      <tspan x={0} y={lineOffset * i} fontSize="12px" key={`${text} + ${i}`}>
         {text + (i === 1 && lines.length > 2 ? '...' : '')}
       </tspan>
     ))
@@ -235,8 +236,8 @@ const ToDoGraph: React.FC<DeepReadonly<{
    * Handlers/Interaction
    */
 
-  const checkHasId = (obj: unknown): obj is { id: string } => {
-    return (obj as { id: string }).id === 'string'
+  const checkHasId = (obj: unknown): obj is { id: number } => {
+    return typeof (obj as { id: number }).id === 'number'
   }
 
   const findEdge = (viewEdge: IEdge) =>
@@ -252,8 +253,8 @@ const ToDoGraph: React.FC<DeepReadonly<{
 
   // Node 'mouseUp' handler
   const onSelectNode = (viewNode: INode | null) => {
-    if (!checkHasId(viewNode)) throw new Error('type error')
     if (viewNode !== null) {
+      if (!checkHasId(viewNode)) throw new Error('type error')
       // dispatch(toggleToDo(viewNode.id))
       dispatch({
         type: 'viewer/FOCUS_TODO',
@@ -285,8 +286,8 @@ const ToDoGraph: React.FC<DeepReadonly<{
     if (!checkHasId(sourceViewNode) || !checkHasId(targetViewNode))
       throw new Error('type error')
     const viewEdge: ToDoGraphEdge = {
-      source: sourceViewNode.id,
-      target: targetViewNode.id,
+      source: sourceViewNode.id.toString(),
+      target: targetViewNode.id.toString(),
       type: 'NORMAL',
     }
 
@@ -363,8 +364,8 @@ const ToDoGraph: React.FC<DeepReadonly<{
         onDeleteEdge={onDeleteEdge}
         maxTitleChars={Infinity}
         nodeSize={150}
-        zoomDelay={100}
-        zoomDur={0}
+        zoomDelay={500}
+        zoomDur={500}
         renderNodeText={(data, id, isSelected) => {
           const isValidData = (d: unknown): d is { title: string } =>
             typeof (d as { title: string }).title === 'string'

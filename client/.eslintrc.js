@@ -70,8 +70,13 @@ module.exports = {
     "no-use-before-define": 'off',
     "@typescript-eslint/no-use-before-define":'off',
 
+    // Strict types
+    // "@typescript-eslint/prefer-readonly-parameter-types":'error', // Bug
+    "@typescript-eslint/switch-exhaustiveness-check":'error',
+    "@typescript-eslint/strict-boolean-expressions":'error',
+
     // Give up support for older OS
-    "jsx-a11y/label-has-associated-control": [ 2, {
+    "jsx-a11y/label-has-associated-control": [ 'error', {
       "labelComponents": ["CustomLabel"],
       "labelAttributes": ["inputLabel"],
       "controlComponents": ["CustomInput"],

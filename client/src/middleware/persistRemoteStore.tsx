@@ -49,9 +49,12 @@ export const persistRemoteStore: Middleware<
         .catch((reason) => {
           throw new Error(reason)
         })
-      return
+      break
     }
     case 'persistRemoteStore/CONNECT':
       connecter.connect(api.dispatch, ownAction.payload.path)
+      break
+    case 'persistRemoteStore/RECIEVED':
+      break
   }
 }

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { Dispatch } from 'redux'
-import { getRoomName, checkIsRemoteMode } from '../router'
+import { checkIsRemoteMode, fetchRemoteConfig } from '../router'
 import {
   ToDoListWrapper,
   ToDoGraphWrapper,
@@ -37,20 +37,23 @@ const App: React.FC = () => {
   })()
 
   useEffect(() => {
-    if (checkIsRemoteMode()) {
+    const remoteConfig = fetchRemoteConfig()
+    if (remoteConfig !== undefined) {
       dispatch({
         type: 'persistRemoteStore/CONNECT',
         payload: {
-          path: `${config.SERVER_ADDRESS}/${getRoomName() as string}`,
+          path: `${config.SERVER_ADDRESS}/${remoteConfig.roomName}`,
         },
       })
     }
   }, [dispatch])
 
   return (
-    <div>
+    <>
       <ToDoListWrapper>
-        {getRoomName() === null && (
+        {checkIsRemoteMode() !== null ? (
+          <></>
+        ) : (
           <TutrialCard>
             {`
                   使い方
@@ -76,13 +79,13 @@ const App: React.FC = () => {
         )}
         <AppendToDoForm />
         <Footer />
-        {focusedTodo !== undefined && <ToDoViewer todo={focusedTodo} />}
+        {focusedTodo === undefined ? <></> : <ToDoViewer todo={focusedTodo} />}
         <ToDoList todos={filteredToDos} />
       </ToDoListWrapper>
       <ToDoGraphWrapper>
         <ToDoGraph todos={filteredToDos} />
       </ToDoGraphWrapper>
-    </div>
+    </>
   )
 }
 

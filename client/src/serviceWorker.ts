@@ -19,7 +19,7 @@ const isLocalhost = Boolean(
     // 127.0.0.0/8 are considered localhost for IPv4.
     /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/.exec(
       window.location.hostname
-    )
+    ) !== null
 )
 
 type Config = {
@@ -74,7 +74,7 @@ function registerValidSW(swUrl: string, config?: Config) {
         }
         installingWorker.onstatechange = () => {
           if (installingWorker.state === 'installed') {
-            if (navigator.serviceWorker.controller) {
+            if (navigator.serviceWorker.controller !== null) {
               // At this point, the updated precached content has been fetched,
               // but the previous service worker will still serve the older
               // content until all client tabs are closed.
@@ -84,7 +84,7 @@ function registerValidSW(swUrl: string, config?: Config) {
               )
 
               // Execute callback
-              if (config && config.onUpdate) {
+              if (config?.onUpdate !== undefined) {
                 config.onUpdate(registration)
               }
             } else {
@@ -94,7 +94,7 @@ function registerValidSW(swUrl: string, config?: Config) {
               console.log('Content is cached for offline use.')
 
               // Execute callback
-              if (config && config.onSuccess) {
+              if (config?.onSuccess !== undefined) {
                 config.onSuccess(registration)
               }
             }
@@ -117,7 +117,7 @@ function checkValidServiceWorker(swUrl: string, config?: Config) {
       const contentType = response.headers.get('content-type')
       if (
         response.status === 404 ||
-        (contentType != null && contentType.indexOf('javascript') === -1)
+        (contentType !== null && contentType.includes('javascript') === false)
       ) {
         // No service worker found. Probably a different app. Reload the page.
         navigator.serviceWorker.ready

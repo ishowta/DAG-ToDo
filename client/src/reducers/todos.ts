@@ -93,7 +93,9 @@ export const todosReducer: Reducer<ToDoState, AnyAction> = (
   const persistRemoteStoreAction = action as PersistRemoteStoreAction
   switch (persistRemoteStoreAction.type) {
     case 'persistRemoteStore/RECIEVED':
-      return persistRemoteStoreAction.payload.data as ToDo[]
+      // TODO: Safe parsing
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      return JSON.parse(persistRemoteStoreAction.payload.data) as ToDo[]
     default:
   }
   switch (action.type) {

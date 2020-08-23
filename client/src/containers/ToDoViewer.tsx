@@ -4,7 +4,7 @@ import { Dispatch } from 'redux'
 import { DeepReadonly } from 'utility-types'
 import { ToDo } from '../stores/todos'
 import { ViewerInner } from './styles/Viewer.style'
-import { getRoomName, checkIsRemoteMode } from '../router'
+import { fetchRemoteConfig } from '../router'
 import { DoneUndoButton, DeleteButton } from '../components/Buttons'
 import { ToDoAction } from '../actions/todos'
 
@@ -15,18 +15,20 @@ const ToDoViewer: React.FC<DeepReadonly<{
   const { todo } = props
   const [text, setText] = useState(todo.text)
 
-  const LinkToScrapbox = () =>
-    checkIsRemoteMode() ? (
+  const LinkToScrapbox = () => {
+    const remoteConfig = fetchRemoteConfig()
+    return remoteConfig !== undefined ? (
       <a
-        href={`https://scrapbox.io/${getRoomName() as string}/${todo.text}`}
+        href={`https://scrapbox.io/${remoteConfig.roomName}/${todo.text}`}
         target="_blank"
         rel="noopener noreferrer"
       >
         (→ノート)
       </a>
     ) : (
-      <div />
+      <></>
     )
+  }
 
   return (
     <ViewerInner>
@@ -34,7 +36,7 @@ const ToDoViewer: React.FC<DeepReadonly<{
         onSubmit={(e) => {
           e.preventDefault()
           // (instant) Validation
-          if (!text.trim()) {
+          if (text.trim() === '') {
             return
           }
           dispatch({
@@ -52,12 +54,12 @@ const ToDoViewer: React.FC<DeepReadonly<{
         </label>
         <input type="submit" value="Submit" />
       </form>
-      <div>
+      <>
         {todo.text}
         <LinkToScrapbox />
-      </div>
+      </>
       <br />
-      <div>
+      <>
         <DoneUndoButton
           completed={todo.completed}
           onClick={() =>
@@ -75,7 +77,7 @@ const ToDoViewer: React.FC<DeepReadonly<{
             })
           }
         />
-      </div>
+      </>
     </ViewerInner>
   )
 }

@@ -74,7 +74,18 @@ module.exports = {
     // Strict types
     // "@typescript-eslint/prefer-readonly-parameter-types":'error', // Bug
     "@typescript-eslint/switch-exhaustiveness-check":'error',
-    "@typescript-eslint/strict-boolean-expressions":'error',
+    "@typescript-eslint/consistent-type-assertions": ['error',{
+      assertionStyle: 'never',
+    }],
+    "@typescript-eslint/strict-boolean-expressions":['error',{
+      allowString: true,
+      allowNumber: true,
+      allowNullableObject: false, // to function object
+      allowNullableBoolean: false,
+      allowNullableString: false,
+      allowNullableNumber: false,
+      allowAny: false
+    }],
 
     // Give up support for older OS
     "jsx-a11y/label-has-associated-control": [ 'error', {
@@ -105,6 +116,16 @@ module.exports = {
         "@typescript-eslint/explicit-function-return-type": ["error",{
           "allowHigherOrderFunctions" : false,
           "allowTypedFunctionExpressions":false
+        }],
+      }
+    },
+    {
+      "files":["src/reducers/**/*", "src/middleware/**/*"],
+      "rules":{
+        // TODO: Cast at compile time
+        // Allow `as` style type assertions because need code completions of several action types.
+        "@typescript-eslint/consistent-type-assertions":['error',{
+          assertionStyle: 'as',
         }],
       }
     }

@@ -68,8 +68,8 @@ const ToDoGraphNodeText: React.FC<DeepReadonly<{
 
   return (
     <text className={`${className} wraptext`} textAnchor="middle">
-      {title && renderText()}
-      {title && <title>{title}</title>}
+      {title === '' ? <></> : renderText()}
+      {title === '' ? <></> : <title>{title}</title>}
     </text>
   )
 }
@@ -104,10 +104,11 @@ class Graph {
     }))
 
     this.nodeList.forEach((node) => {
-      node.childNodes = node.data.nextToDos.map(
-        (nextTodoId) =>
-          this.nodeList.find((n) => n.data.id === nextTodoId) as Node
-      )
+      node.childNodes = node.data.nextToDos.map((nextTodoId) => {
+        const nextToDo = this.nodeList.find((n) => n.data.id === nextTodoId)
+        if (nextToDo === undefined) throw new Error('Detect broken ToDo data')
+        return nextToDo
+      })
       node.childNodes.forEach((childNode) => {
         childNode.parentNodes.push(node)
       })
@@ -186,7 +187,7 @@ class Graph {
       depthList,
       maxDepth,
       (depth, i) => {
-        return { index: depth, value: this.nodeList[i as number] }
+        return { index: depth, value: this.nodeList[i] }
       }
     )
 
@@ -237,6 +238,7 @@ const ToDoGraph: React.FC<DeepReadonly<{
    */
 
   const checkHasId = (obj: unknown): obj is { id: number } => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     return typeof (obj as { id: number }).id === 'number'
   }
 
@@ -368,6 +370,7 @@ const ToDoGraph: React.FC<DeepReadonly<{
         zoomDur={500}
         renderNodeText={(data, id, isSelected) => {
           const isValidData = (d: unknown): d is { title: string } =>
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             typeof (d as { title: string }).title === 'string'
           if (!isValidData(data)) throw new Error('type error')
           return <ToDoGraphNodeText data={data} isSelected={isSelected} />

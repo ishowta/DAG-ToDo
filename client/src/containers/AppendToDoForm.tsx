@@ -8,12 +8,12 @@ const AppendToDoForm: React.FC = () => {
   const [todoText, setToDoText] = useState('')
 
   return (
-    <div>
+    <>
       <form
         onSubmit={(e) => {
           e.preventDefault()
           // (instant) Validation
-          if (!todoText.trim()) {
+          if (todoText.trim() === '') {
             return
           }
           dispatch({
@@ -30,7 +30,7 @@ const AppendToDoForm: React.FC = () => {
         />
         <button type="submit">Add ToDo</button>
       </form>
-    </div>
+    </>
   )
 }
 

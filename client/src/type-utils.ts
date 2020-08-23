@@ -32,11 +32,15 @@ export function makeDictFromArray<T, U>(
 export function bucket<T, U>(
   arr: T[],
   length: number,
-  callbackfn: (value: T, index?: number) => { index: number; value: U }
+  callbackfn: (
+    value: T,
+    index: number,
+    array: T[]
+  ) => { index: number; value: U }
 ): U[][] {
   const newArr: U[][] = new Array(length).map<U[]>(() => [])
   arr.forEach((value, i) => {
-    const { index: resIndex, value: resValue } = callbackfn(value, i)
+    const { index: resIndex, value: resValue } = callbackfn(value, i, arr)
     if (newArr[resIndex] === undefined) {
       newArr[resIndex] = [resValue]
     } else {

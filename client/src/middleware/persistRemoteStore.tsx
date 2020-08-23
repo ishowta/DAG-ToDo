@@ -22,12 +22,13 @@ class PersistRemoteStoreEventSourceConnector {
   source: EventSource | null = null
 
   connect(dispatch: Dispatch<PersistRemoteStoreAction>, path: string) {
+    const isString = (obj: unknown): obj is string => typeof obj !== 'string'
     this.source = new EventSource(path)
     this.source.onmessage = (event) => {
+      if (!isString(event.data)) throw new Error('type error')
       dispatch({
         type: 'persistRemoteStore/RECIEVED',
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        payload: { data: JSON.parse(event.data) },
+        payload: { data: event.data },
       })
     }
   }

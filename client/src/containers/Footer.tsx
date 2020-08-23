@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
     <div>
       <span>Show: </span>
       <Button
-        disabled={filter !== VisibilityFilters.SHOW_ALL}
+        disabled={filter === VisibilityFilters.SHOW_ALL}
         onClick={() =>
           dispatch({
             type: 'viewer/SET_VISIBILITY_FILTER',
@@ -24,7 +24,7 @@ const Footer: React.FC = () => {
         All
       </Button>
       <Button
-        disabled={filter !== VisibilityFilters.SHOW_ACTIVE}
+        disabled={filter === VisibilityFilters.SHOW_ACTIVE}
         onClick={() =>
           dispatch({
             type: 'viewer/SET_VISIBILITY_FILTER',
@@ -35,7 +35,7 @@ const Footer: React.FC = () => {
         Active
       </Button>
       <Button
-        disabled={filter !== VisibilityFilters.SHOW_COMPLETED}
+        disabled={filter === VisibilityFilters.SHOW_COMPLETED}
         onClick={() =>
           dispatch({
             type: 'viewer/SET_VISIBILITY_FILTER',

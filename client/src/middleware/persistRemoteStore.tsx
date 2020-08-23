@@ -22,7 +22,7 @@ class PersistRemoteStoreEventSourceConnector {
   source: EventSource | null = null
 
   connect(dispatch: Dispatch<PersistRemoteStoreAction>, path: string) {
-    const isString = (obj: unknown): obj is string => typeof obj !== 'string'
+    const isString = (obj: unknown): obj is string => typeof obj === 'string'
     this.source = new EventSource(path)
     this.source.onmessage = (event) => {
       if (!isString(event.data)) throw new Error('type error')

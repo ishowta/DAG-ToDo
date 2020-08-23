@@ -12,6 +12,7 @@ It is a simple ToDo with dependency expressed by DAG
 ### Tasks
 - Add test
 - Improve UI/UX
+- Secure
 
 ### How to run
 1. client

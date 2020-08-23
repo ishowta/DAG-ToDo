@@ -11,11 +11,11 @@ import './index.css'
 ReactDOM.render(
   <Provider store={store}>
     {checkIsRemoteMode() ? (
+      <App />
+    ) : (
       <PersistGate loading="Loading..." persistor={persistor}>
         <App />
       </PersistGate>
-    ) : (
-      <App />
     )}
   </Provider>,
   document.getElementById('root')

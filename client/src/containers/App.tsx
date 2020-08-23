@@ -51,7 +51,7 @@ const App: React.FC = () => {
   return (
     <>
       <ToDoListWrapper>
-        {checkIsRemoteMode() !== null ? (
+        {checkIsRemoteMode() ? (
           <></>
         ) : (
           <TutrialCard>

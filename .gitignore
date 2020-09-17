@@ -4,6 +4,8 @@
 .DS_Store
 
 # server
+server/server
+*.rdb
 
 # env
 .env

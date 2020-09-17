@@ -16,12 +16,8 @@ It is a simple ToDo with dependency expressed by DAG
 
 ### How to run
 1. client
-   - `yarn`
    - Copy `.env.sample` to `.env` and fill it
    - `yarn start`
 2. server
-   - `pipenv --python 3`
-   - `pipenv install`
-   - `pipenv shell`
-   - `python3 server.py`
+   - `nimble run`
    - `redis-server --port 3002`

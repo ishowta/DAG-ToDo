@@ -1,4 +1,4 @@
-[Site](https://todo.temp-iwata.tokyo/)
+[todo.iwata.love](https://todo.iwata.love/)
 
 It is a simple ToDo with dependency expressed by DAG
 

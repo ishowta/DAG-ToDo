@@ -17,7 +17,7 @@
     "@types/redux-persist": "^4.3.1",
     "@types/redux-thunk": "^2.1.0",
     "@types/styled-components": "^5.1.2",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "d3": "^5.16.0",
     "d3plus": "^1.9.8",
     "lazy.js": "^0.5.1",

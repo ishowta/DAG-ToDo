@@ -2,7 +2,7 @@ import base64, strformat
 import jester, redis
 
 proc connectRedis(): Future[AsyncRedis]{.async.} =
-    return await openAsync("localhost", 3002.Port)
+    return await openAsync("localhost", 6379.Port)
 
 proc main() {.async.} =
     let r = await connectRedis()
